@@ -81,7 +81,7 @@ def is_hanzi(c):
 #     return bool(regex.match(r'\p{script=han}', char))
 
 
-def tokenize(line, max_len=20, suffix='##'):
+def tokenize(line):
     # token sentence to tokens
     if not isinstance(line,str):
         return None
@@ -123,13 +123,6 @@ def tokenize(line, max_len=20, suffix='##'):
         cat0 = cat
         name0 = name
 
-    tokens = []
-    for w in l.split(' '):
-        if not w:
-            continue
-        while len(w) > max_len:
-            tokens.append(w[:max_len])
-            w = suffix+w[max_len:]
-        tokens.append(w)
+    tokens = [ x for x in l.split() if x]
     return tokens
 
