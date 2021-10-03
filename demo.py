@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
     # token a sentence for all languages
     print(tokenize(line))
+    print(tokenize(line,normalize=False))
     # ['pays', '-', 'grand', '-', 'blanc', '-', 'élevé', '»', '(', '白', '高', '大', '夏', '國', ')']
 
     def test():

@@ -81,13 +81,14 @@ def is_hanzi(c):
 #     return bool(regex.match(r'\p{script=han}', char))
 
 
-def tokenize(line):
+def tokenize(line,normalize=True):
     # token sentence to tokens
     if not isinstance(line,str):
         return None
     if not line:
         return []
-
+    if normalize:
+        line=shave_marks(line)
     l = ''
     cat0 = ''
     name0 = ''
