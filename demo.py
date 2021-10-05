@@ -3,17 +3,17 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from langer import is_hanzi,get_block,shave_marks,tokenize
+from langer import is_hanzi,get_block,shave_marks,tokenize,trim_char_name
 
 
 if __name__ == "__main__":
-    line = 'pays-grand-blanc-élevé » (白高大夏國)'
+    line = 'Ⅷpays-grand-blanc-élevé » (白高大夏國)'
 
     #  get unicode block of a character
     for x in line:
         is_chinese=is_hanzi(x)
         start,end,block_name=get_block(x)
-        char_name=unicodedata.name(x)
+        print(is_chinese,start,end,block_name,unicodedata.name(x),trim_char_name(x))
     
     # convert varirants to base character
     print(shave_marks(line))
