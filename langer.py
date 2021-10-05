@@ -64,16 +64,17 @@ ranges = [
     [0x3105, 0x312F],
     [0x31A0, 0x31BA],
 ]
-
+ranges.sort(key=lambda x:x[0])
 
 def is_hanzi(c):
     """
     if character c is hanzi
     """
     point=ord(c)
-    for a, b in ranges:
-        if a <= point <= b:
-            return True
+    if ranges[0][0]<=point<=ranges[-1][1]:
+        for a, b in ranges:
+            if a <= point <= b:
+                return True
     return False
 
 #  require regex
