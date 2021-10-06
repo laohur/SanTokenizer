@@ -28,41 +28,44 @@ def get_block(c):
     else:
         return -1, -1, ''
 
-# 去掉全部组合记号的函数
-# https://zhuanlan.zhihu.com/p/86329130
-def shave_marks(txt):
-    # 把所有字符分解成基字符和组合记号
-    norm_txt = unicodedata.normalize('NFD', txt)
-    # unicodedata.combining('a')
-    # 过滤掉所有组合记号
-    shaved = ''.join(c for c in norm_txt if not unicodedata.combining(c))
-    # 重组所有字符
-    return unicodedata.normalize('NFKC', shaved)
-
 
 """
 http://yedict.com/zsts.htm
 """
 ranges = [
-    [0x4E00, 0x9FA5],
-    [0x9FA6, 0x9FFC],
-    [0x3400, 0x4DB5],
-    [0x4DB6, 0x4DBF],
-    [0x20000, 0x2A6D6],
-    [0x2A6D7, 0x2A6DD],
-    [0x2A700, 0x2B734],
-    [0x2B740, 0x2B81D],
-    [0x2B820, 0x2CEA1],
-    [0x2CEB0, 0x2EBE0],
-    [0x30000, 0x3134A],
-    [0x2F00, 0x2FD5],
-    [0x2E80, 0x2EF3],
-    [0xF900, 0xFAD9],
-    [0x2F800, 0x2FA1D],
-    [0x31C0, 0x31E3],
-    [0x2FF0, 0x2FFB],
-    [0x3105, 0x312F],
-    [0x31A0, 0x31BA],
+    [0x2e80,0x2eff],
+    [0x2e80,0x2eff],
+    [0x2f00,0x2fdf],
+    [0x2ff0,0x2fff],
+    [0x3000,0x303f],
+    [0x31c0,0x31ef],
+    [0x31c0,0x31ef],
+    [0x3200,0x32ff],
+    [0x3300,0x33ff],
+    [0x3400,0x4dbf],
+    [0x3400,0x4dbf],
+    [0x4e00,0x9fff],
+    [0x4e00,0x9fff],
+    [0xa490,0xa4cf],
+    [0xf900,0xfaff],
+    [0xf900,0xfaff],
+    [0xfe30,0xfe4f],
+    [0x16fe0,0x16fff],
+    [0x1f200,0x1f2ff],
+    [0x20000,0x2a6df],
+    [0x20000,0x2a6df],
+    [0x2a700,0x2b73f],
+    [0x2a700,0x2b73f],
+    [0x2b740,0x2b81f],
+    [0x2b740,0x2b81f],
+    [0x2b820,0x2ceaf],
+    [0x2b820,0x2ceaf],
+    [0x2ceb0,0x2ebef],
+    [0x2ceb0,0x2ebef],
+    [0x2f800,0x2fa1f],
+    [0x2f800,0x2fa1f],
+    [0x30000,0x3134f],
+    [0x30000,0x3134f],
 ]
 ranges.sort(key=lambda x:x[0])
 
@@ -75,11 +78,42 @@ def is_hanzi(c):
         for a, b in ranges:
             if a <= point <= b:
                 return True
+    if "ideograph" in unicodedata.name(c):
+        return True
     return False
 
-#  require regex
-# def is_hanzi(char):
-#     return bool(regex.match(r'\p{script=han}', char))
+def get_block_han():
+    # import regex
+    # def is_hanzi(char):
+        # return bool(regex.match(r'\p{script=han}', char))
+    block_han=[]
+
+    for a,b,name in blocks:
+        for x in ["cjk",  "ideograph", "stroke", "radical"]:
+            if x in name.lower():
+                # print(a,b,name)
+                m=str(hex(a))
+                n=str(hex(b))
+                block_han.append([m,n])
+                print('['+m+','+n+'],')
+
+    # print(block_han)
+
+    #     c=chr(a)
+    #     if  regex.match(r'\p{script=han}',c):
+    #         print(a,b,name,c)
+
+
+# 去掉全部组合记号的函数
+# https://zhuanlan.zhihu.com/p/86329130
+def shave_marks(txt):
+    # 把所有字符分解成基字符和组合记号
+    norm_txt = unicodedata.normalize('NFD', txt)
+    # unicodedata.combining('a')
+    # 过滤掉所有组合记号
+    shaved = ''.join(c for c in norm_txt if not unicodedata.combining(c))
+    # 重组所有字符
+    return unicodedata.normalize('NFKC', shaved)
 
 
 def tokenize(line,normalize=True):
@@ -186,6 +220,8 @@ def read_char_names():
     print(len(ids),' '.join(ids))
 
 if __name__=="__main__":
+
+    get_block_han()
 
     a='\u2167'
     b=tokenize(a)
