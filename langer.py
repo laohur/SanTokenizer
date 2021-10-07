@@ -137,20 +137,19 @@ def tokenize(line,normalize=True):
             # print( str(hex(ord(c)))+' '+c+' '+str(e))
             pass
         c = c.strip()
-        if not c:
+        if not c:  # blank
             c = ' '
-        elif cat == 'C':
+        elif cat == 'C':  # control
             c = ' '
-        elif cat in 'MPSZ' :
+        elif cat in 'MPSZ' :  # certain
             c = ' '+c+' '
-        elif cat0 and  cat != cat0:
-            c = ' '+c
-        elif n-m+1 > 256 or is_hanzi(c) :
+        elif n-m+1 > 256 or is_hanzi(c) :  # hanzi or alphabet size too big
                 c = ' '+c+' '
-        elif name0 and name != name0:
+        elif cat0 and  cat != cat0: # switch alphabet
             c = ' '+c
-            # keep original
-
+        elif name0 and name != name0:  # switch language
+            c = ' '+c
+        # default keep original
         l+=c
         cat0 = cat
         name0 = name
