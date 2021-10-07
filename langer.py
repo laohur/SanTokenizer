@@ -78,8 +78,6 @@ def is_hanzi(c):
         for a, b in ranges:
             if a <= point <= b:
                 return True
-    if "ideograph" in unicodedata.name(c):
-        return True
     return False
 
 def get_block_han():
