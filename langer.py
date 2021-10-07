@@ -143,7 +143,9 @@ def tokenize(line,normalize=True):
             c = ' '
         elif cat in 'MPSZ' :  # certain
             c = ' '+c+' '
-        elif n-m+1 > 256 or is_hanzi(c) :  # hanzi or alphabet size too big
+        elif is_hanzi(c): # hanzi
+            c = ' '+c+' '
+        elif n-m+1 > 256  :  #  alphabet size too big
                 c = ' '+c+' '
         elif cat0 and  cat != cat0: # switch alphabet
             c = ' '+c
