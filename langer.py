@@ -145,10 +145,8 @@ def tokenize(line,normalize=True):
             c = ' '+c+' '
         elif cat0 and  cat != cat0:
             c = ' '+c
-        elif n-m+1 > 256 or name[:3]=='CJK' :
+        elif n-m+1 > 256 or is_hanzi(c) :
                 c = ' '+c+' '
-        elif name[:3]=='CJK':
-            c = ' '+c+' '
         elif name0 and name != name0:
             c = ' '+c
             # keep original
@@ -194,7 +192,6 @@ def trim_char_name(c):
 
 def read_char_names():
     bigrams=gen_bigrams()
-
     cats=set()
     ids=set()
     for l in open("NamesList.txt"):
