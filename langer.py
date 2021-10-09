@@ -342,13 +342,16 @@ _blocks = [
     [0x100000, 0x10ffff, 'Supplementary Private Use Area-B']
 ]
 _block_starts = [x[0] for x in _blocks]
-def get_block(c,blocks,block_starts):
+
+
+def get_block(c, blocks, block_starts):
     point = ord(c)
     idx = bisect.bisect_right(block_starts, point)-1
     if 0 <= idx <= len(blocks) and blocks[idx][0] <= point <= blocks[idx][1]:
         return blocks[idx]
     else:
         return -1, -1, ''
+
 
 def get_block_han(blocks):
     block_han = []
@@ -361,6 +364,7 @@ def get_block_han(blocks):
                 block_han.append([m, n])
                 print('['+m+','+n+'],')
                 break
+
 
 _block_han = [
     [0x2e80, 0x2eff],
@@ -388,7 +392,7 @@ _block_han = [
 # block_han.sort(key=lambda x: x[0])
 
 
-def is_hanzi(c,block_han):
+def is_hanzi(c, block_han):
     """
     if character c is hanzi
     """
@@ -400,62 +404,77 @@ def is_hanzi(c,block_han):
     return False
 
 
-# 去掉全部组合记号的函数
-# https://zhuanlan.zhihu.com/p/86329130
-def shave_marks(txt):
-    # 把所有字符分解成基字符和组合记号
-    norm_txt = unicodedata.normalize('NFD', txt)
-    # unicodedata.combining('a')
-    # 过滤掉所有组合记号
-    shaved = ''.join(c for c in norm_txt if not unicodedata.combining(c))
-    # 重组所有字符
-    return unicodedata.normalize('NFKC', shaved)
-
-
-def tokenize(line, normalize=True):
-    # token sentence to tokens
-    if not isinstance(line, str):
-        return None
+def split_chars(line):
     if not line:
-        return []
-    if normalize:
-        line = shave_marks(line)
+        return ''
     l = ''
-    cat0 = ''
-    name0 = ''
-    for c in line:
-        if not c:
-            continue
-        cat = unicodedata.category(c)[0]
-        # https://zhuanlan.zhihu.com/p/93029007 https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
-        m, n, name = get_block(c)
-        try:
-            name = unicodedata.name(c).split(' ')[0]
-        except Exception as e:
-            # print( str(hex(ord(c)))+' '+c+' '+str(e))
-            pass
-        c = c.strip()
-        if not c:  # blank
-            c = ' '
-        elif cat == 'C':  # control
-            c = ' '
-        elif cat in 'MPSZ':  # certain
-            c = ' '+c+' '
-        elif is_hanzi(c):  # hanzi
-            c = ' '+c+' '
-        elif n-m+1 > 256:  # alphabet size too big
-            c = ' '+c+' '
-        elif cat0 and cat != cat0:  # switch alphabet
-            c = ' '+c
-        elif name0 and name != name0:  # switch language
-            c = ' '+c
-        # default keep original
-        l += c
-        cat0 = cat
-        name0 = name
+    for x in line:
+        if is_hanzi(x, _block_han):
+            x = ' '+x+' '
+        else:
+            m, n, name = get_block(x, _blocks, _block_starts)
+            if n-m+1 > 256:
+                x = ' '+x+' '
+        l += x
+    return l
 
-    tokens = [x for x in l.split() if x]
-    return tokens
+# https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
+def split_category(line):
+    if not line:
+        return ''
+    l = ''
+    cat0 = cat = ''
+    for x in line:
+        cat = unicodedata.category(x)[0]
+        if cat == 'C':
+            x = ' '
+        elif cat in 'PAZ':
+            x = ' '+x+' '
+        elif cat in 'LN' and cat0 != cat:
+            x = ' '+x
+        cat0 = cat
+        l += x
+    return l
+
+
+def strip_accents(line):
+    line = unicodedata.normalize('NFD', line)
+    l = ''
+    for x in line:
+        cat = unicodedata.category(x)
+        if cat == "Mn":
+            continue
+        l += x
+    return l
+
+
+def split_lanugage(line):
+    if not line:
+        return ''
+    l = ''
+    name0 = name = ''
+    for x in line:
+        try:
+            name = unicodedata.name(x).split(' ')[0]
+            if name != name0:
+                x = ' '+x
+        except:
+            x = ' '
+        name0 = name
+        l += x
+    return l
+
+
+def split_punctuation(line):
+    if not line:
+        return ''
+    l = ''
+    for x in line:
+        cat = unicodedata.category(x)[0]
+        if cat == "P":
+            x = ' '+x+' '
+        l += x
+    return l
 
 
 def gen_bigrams():
@@ -518,155 +537,46 @@ def read_char_names():
     print(len(ids), ' '.join(ids))
 
 
-def whitespace_tokenize(text):
-    """Runs basic whitespace cleaning and splitting on a piece of text."""
-    text = text.strip()
-    if not text:
-        return []
-    tokens = text.split()
-    return tokens
-
-# inspired by https://github.com/NVIDIA/DeepLearningExamples/blob/master/PyTorch/LanguageModeling/BERT/tokenization.py
-class BasicTokenizer(object):
-    """Runs basic tokenization (punctuation splitting, lower casing, etc.)."""
-
-    def __init__(self,
-                 do_lower_case=True,
-                 never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")):
-        """Constructs a BasicTokenizer.
-        Args:
-          do_lower_case: Whether to lower case the input.
-        """
+class Langer:
+    def __init__(self, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
-    def tokenize(self, text):
-        """Tokenizes a piece of text."""
-        text = self._clean_text(text)
-        # This was added on November 1st, 2018 for the multilingual and Chinese
-        # models. This is also applied to the English models now, but it doesn't
-        # matter since the English models were not trained on any Chinese data
-        # and generally don't have any Chinese data in them (there are Chinese
-        # characters in the vocabulary because Wikipedia does have some Chinese
-        # words in the English Wikipedia.).
-        text = self._split_chars(text)
-        orig_tokens = whitespace_tokenize(text)
-        split_tokens = []
-        for token in orig_tokens:
-            if self.do_lower_case and token not in self.never_split:
-                token = token.lower()
-                token = self._run_strip_accents(token)
-            split_tokens.extend(self._run_split_on_punc(token))
+    def tokenize(self,line):
+        words=line.split()
+        if self.do_lower_case:
+            for i in range(len(words)):
+                if words[i] not in self.never_split:
+                    words[i]=words[i].lower()
+        words=self.batch_token(split_chars,words)
+        words=self.batch_token(split_category,words)
+        words=self.batch_token(strip_accents,words)
+        words=self.batch_token(split_lanugage,words)
+        words=self.batch_token(split_punctuation,words)
+        return words
 
-        output_tokens = whitespace_tokenize(" ".join(split_tokens))
-        return output_tokens
-
-    def _run_strip_accents(self, text):
-        """Strips accents from a piece of text."""
-        text = unicodedata.normalize("NFKD", text)
-        output = []
-        for char in text:
-            cat = unicodedata.category(char)
-            if cat == "Mn":
+    def batch_token(self,fn,words):
+        tokens=[]        
+        for x in words:
+            if not x:
                 continue
-            output.append(char)
-        return "".join(output)
-
-    def _run_split_on_punc(self, text):
-        """Splits punctuation on a piece of text."""
-        if text in self.never_split:
-            return [text]
-        chars = list(text)
-        i = 0
-        start_new_word = True
-        output = []
-        while i < len(chars):
-            char = chars[i]
-            if _is_punctuation(char):
-                output.append([char])
-                start_new_word = True
+            if x in self.never_split:
+                tokens.append(x)
             else:
-                if start_new_word:
-                    output.append([])
-                start_new_word = False
-                output[-1].append(char)
-            i += 1
+                tokens+=fn(x).split()        
+        return [x for x in tokens if x]
 
-        return ["".join(x) for x in output]
-
-    def _split_chars(self, text):
-        """Adds whitespace around character."""
-        line=''
-        for char in text:
-            a,b,name=get_block(char,_blocks,_block_starts)
-            if b-a+1>256 or is_hanzi(char,_block_han):
-                line+=' '+char+' '
-            else:
-                line+=char
-        return line
-
-    def _clean_text(self, text):
-        """Performs invalid character removal and whitespace cleanup on text."""
-        output = []
-        for char in text:
-            cp = ord(char)
-            if cp == 0 or cp == 0xfffd or _is_control(char):
-                continue
-            if _is_whitespace(char):
-                output.append(" ")
-            else:
-                output.append(char)
-        return "".join(output)
-
-
-def _is_whitespace(char):
-    """Checks whether `chars` is a whitespace character."""
-    # \t, \n, and \r are technically contorl characters but we treat them
-    # as whitespace since they are generally considered as such.
-    if char == " " or char == "\t" or char == "\n" or char == "\r":
-        return True
-    cat = unicodedata.category(char)
-    if cat == "Zs":
-        return True
-    return False
-
-
-def _is_control(char):
-    """Checks whether `chars` is a control character."""
-    # These are technically control characters but we count them as whitespace
-    # characters.
-    if char == "\t" or char == "\n" or char == "\r":
-        return False
-    cat = unicodedata.category(char)
-    if cat.startswith("C"):
-        return True
-    return False
-
-
-def _is_punctuation(char):
-    """Checks whether `chars` is a punctuation character."""
-    cp = ord(char)
-    # We treat all non-letter/number ASCII as punctuation.
-    # Characters such as "^", "$", and "`" are not in the Unicode
-    # Punctuation class but we treat them as punctuation anyways, for
-    # consistency.
-    if ((cp >= 33 and cp <= 47) or (cp >= 58 and cp <= 64) or
-            (cp >= 91 and cp <= 96) or (cp >= 123 and cp <= 126)):
-        return True
-    cat = unicodedata.category(char)
-    if cat.startswith("P"):
-        return True
-    return False
+    def tokenize_all(self, line):
+        s=line
+        s = split_chars(s)
+        s = split_category(s)
+        s = strip_accents(s)
+        s = split_lanugage(s)
+        s = split_punctuation(s)
+        tokens = [x for x in s.split() if x]
+        return tokens
 
 
 if __name__ == "__main__":
-    # read_blocks()
-    # get_block_han(_blocks)
-
-    line = '[ัีิ์ื็ํึ]Ⅷpays-grand-blanc-élevé » (白高大夏國)'
-    tokenizer=BasicTokenizer()
-    print(tokenizer.tokenize(line))
-
-    print(unicodedata.combining('a'))
-    for x in line:
-        print(trim_char_name(x))
+    _read_blocks()
+    get_block_han(_blocks)
