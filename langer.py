@@ -544,13 +544,13 @@ class Langer:
 
     def tokenize(self,line):
         words=line.split()
+        words=self.batch_token(split_chars,words)
+        words=self.batch_token(split_category,words)
         if self.do_lower_case:
             for i in range(len(words)):
                 if words[i] not in self.never_split:
                     words[i]=words[i].lower()
-        words=self.batch_token(split_chars,words)
-        words=self.batch_token(split_category,words)
-        words=self.batch_token(strip_accents,words)
+            words=self.batch_token(strip_accents,words)
         words=self.batch_token(split_lanugage,words)
         words=self.batch_token(split_punctuation,words)
         return words
@@ -570,7 +570,8 @@ class Langer:
         s=line
         s = split_chars(s)
         s = split_category(s)
-        s = strip_accents(s)
+        if self.do_lower_case:
+            s = strip_accents(s)
         s = split_lanugage(s)
         s = split_punctuation(s)
         tokens = [x for x in s.split() if x]
