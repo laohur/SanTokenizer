@@ -392,13 +392,13 @@ _block_han = [
 # block_han.sort(key=lambda x: x[0])
 
 
-def is_hanzi(c, block_han):
+def is_hanzi(c):
     """
     if character c is hanzi
     """
     point = ord(c)
-    if block_han[0][0] <= point <= block_han[-1][1]:
-        for a, b in block_han:
+    if _block_han[0][0] <= point <= _block_han[-1][1]:
+        for a, b in _block_han:
             if a <= point <= b:
                 return True
     return False
