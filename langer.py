@@ -356,7 +356,7 @@ def get_block(c, blocks, block_starts):
 def get_block_han(blocks):
     block_han = []
     for a, b, name in blocks:
-        for x in ["cjk",  "ideograph", "stroke", "radical"]:
+        for x in ["cjk",  "ideograph", "stroke", "kangxi"]:
             if x in name.lower():
                 # print(a,b,name)
                 m = str(hex(a))
@@ -376,7 +376,6 @@ _block_han = [
     [0x3300, 0x33ff],
     [0x3400, 0x4dbf],
     [0x4e00, 0x9fff],
-    [0xa490, 0xa4cf],
     [0xf900, 0xfaff],
     [0xfe30, 0xfe4f],
     [0x16fe0, 0x16fff],
@@ -387,7 +386,7 @@ _block_han = [
     [0x2b820, 0x2ceaf],
     [0x2ceb0, 0x2ebef],
     [0x2f800, 0x2fa1f],
-    [0x30000, 0x3134f]
+    [0x30000, 0x3134f],
 ]
 # block_han.sort(key=lambda x: x[0])
 
@@ -419,6 +418,8 @@ def split_chars(line):
     return l
 
 # https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
+
+
 def split_category(line):
     if not line:
         return ''
@@ -542,32 +543,32 @@ class Langer:
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
-    def tokenize(self,line):
-        words=line.split()
-        words=self.batch_token(split_chars,words)
-        words=self.batch_token(split_category,words)
+    def tokenize(self, line):
+        words = line.split()
+        words = self.batch_token(split_chars, words)
+        words = self.batch_token(split_category, words)
         if self.do_lower_case:
             for i in range(len(words)):
                 if words[i] not in self.never_split:
-                    words[i]=words[i].lower()
-            words=self.batch_token(strip_accents,words)
-        words=self.batch_token(split_lanugage,words)
-        words=self.batch_token(split_punctuation,words)
+                    words[i] = words[i].lower()
+            words = self.batch_token(strip_accents, words)
+        words = self.batch_token(split_lanugage, words)
+        words = self.batch_token(split_punctuation, words)
         return words
 
-    def batch_token(self,fn,words):
-        tokens=[]        
+    def batch_token(self, fn, words):
+        tokens = []
         for x in words:
             if not x:
                 continue
             if x in self.never_split:
                 tokens.append(x)
             else:
-                tokens+=fn(x).split()        
+                tokens += fn(x).split()
         return [x for x in tokens if x]
 
     def tokenize_all(self, line):
-        s=line
+        s = line
         s = split_chars(s)
         s = split_category(s)
         if self.do_lower_case:
@@ -579,5 +580,5 @@ class Langer:
 
 
 if __name__ == "__main__":
-    _read_blocks()
+    # _read_blocks()
     get_block_han(_blocks)

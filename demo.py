@@ -3,7 +3,7 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from langer import split_chars,split_category,strip_accents,split_lanugage,split_punctuation,Langer
+from langer import is_hanzi,split_chars,split_category,strip_accents,split_lanugage,split_punctuation,Langer
 from tokenization import BasicTokenizer
 
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
             line+=c
         except:
             pass
-    # line = '[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
+    line = '㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
     # s=line
     s=split_chars(line)
     s=split_category(line)
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         try:
             c=unicodedata.category(x)
             n=unicodedata.name(x)
-            print(x,c,n)
+            print(x,c,n,is_hanzi(x))
         except:
             print(x,c,'err')
             pass
