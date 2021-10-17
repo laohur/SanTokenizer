@@ -17,7 +17,7 @@ if __name__ == "__main__":
         except:
             pass
     # line = '[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
-    s=line
+    # s=line
     s=split_chars(line)
     s=split_category(line)
     s=strip_accents(line)
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     s=split_punctuation(line)
 
     print(s)
-    for x in s :
+    for x in line :
         try:
             c=unicodedata.category(x)
             n=unicodedata.name(x)

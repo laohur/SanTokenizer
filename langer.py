@@ -409,7 +409,7 @@ def split_chars(line):
         return ''
     l = ''
     for x in line:
-        if is_hanzi(x, _block_han):
+        if is_hanzi(x):
             x = ' '+x+' '
         else:
             m, n, name = get_block(x, _blocks, _block_starts)
