@@ -417,9 +417,18 @@ def split_chars(line):
         l += x
     return l
 
+def trunc_len(words,max_len=50,never_split=[]):
+    tokens=[]
+    for x in words:
+        if not x:
+            continue
+        if len(x)<=50 or x in never_split :
+            tokens.append(x)
+        else:
+            tokens+=[ x[i:i+50] for i in range(0,len(x),max_len)  ]
+    return tokens
+
 # https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
-
-
 def split_category(line):
     if not line:
         return ''
@@ -538,8 +547,9 @@ def read_char_names():
     print(len(ids), ' '.join(ids))
 
 
-class Langer:
-    def __init__(self, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
+class BasicTokenizer:
+    def __init__(self, max_len=50, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
+        self.max_len=max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
@@ -554,6 +564,7 @@ class Langer:
             words = self.batch_token(strip_accents, words)
         words = self.batch_token(split_lanugage, words)
         words = self.batch_token(split_punctuation, words)
+        words = trunc_len(words,never_split=self.never_split,max_len=self.max_len)
         return words
 
     def batch_token(self, fn, words):
@@ -575,9 +586,8 @@ class Langer:
             s = strip_accents(s)
         s = split_lanugage(s)
         s = split_punctuation(s)
-        tokens = [x for x in s.split() if x]
+        tokens = trunc_len(s.split(),never_split=self.never_split,max_len=self.max_len)
         return tokens
-
 
 if __name__ == "__main__":
     # _read_blocks()
