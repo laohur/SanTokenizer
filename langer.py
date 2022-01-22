@@ -352,8 +352,42 @@ def get_block(c, blocks, block_starts):
     else:
         return -1, -1, ''
 
+# http://yedict.com/zsts.htm
+blocks_raw="""
+4E00-9FA5
+9FA6-9FFF
+3400-4DB5
+4DB6-4DBF
+20000-2A6D6
+2A6D7-2A6DF
+2A700-2B734
+2B740-2B81D
+2B820-2CEA1
+2CEB0-2EBE0
+30000-3134A
+31350-323AF
+暂无unicode
+2F00-2FD5
+2E80-2EF3
+F900-FAD9
+2F800-2FA1D
+31C0-31E3
+2FF0-2FFB
+3105-312F
+31A0-31BA
+"""
 
-def get_block_han(blocks):
+def get_block_han():
+    block_han = []
+    for l in blocks_raw.split('\n'):
+        w=l.strip().split('-')
+        if len(w)!=2:
+            continue
+        r=[ "0x"+x for x in w ]
+        block_han.append(r)
+    print(block_han)
+            
+def get_block_han0(blocks):
     block_han = []
     for a, b, name in blocks:
         for x in ["cjk",  "ideograph", "stroke", "kangxi"]:
@@ -366,28 +400,7 @@ def get_block_han(blocks):
                 break
 
 
-_block_han = [
-    [0x2e80, 0x2eff],
-    [0x2f00, 0x2fdf],
-    [0x2ff0, 0x2fff],
-    [0x3000, 0x303f],
-    [0x31c0, 0x31ef],
-    [0x3200, 0x32ff],
-    [0x3300, 0x33ff],
-    [0x3400, 0x4dbf],
-    [0x4e00, 0x9fff],
-    [0xf900, 0xfaff],
-    [0xfe30, 0xfe4f],
-    [0x16fe0, 0x16fff],
-    [0x1f200, 0x1f2ff],
-    [0x20000, 0x2a6df],
-    [0x2a700, 0x2b73f],
-    [0x2b740, 0x2b81f],
-    [0x2b820, 0x2ceaf],
-    [0x2ceb0, 0x2ebef],
-    [0x2f800, 0x2fa1f],
-    [0x30000, 0x3134f],
-]
+_block_han = [[0x4E00, 0x9FA5], [0x9FA6, 0x9FFF], [0x3400, 0x4DB5], [0x4DB6, 0x4DBF], [0x20000, 0x2A6D6], [0x2A6D7, 0x2A6DF], [0x2A700, 0x2B734], [0x2B740, 0x2B81D], [0x2B820, 0x2CEA1], [0x2CEB0, 0x2EBE0], [0x30000, 0x3134A], [0x31350, 0x323AF], [0x2F00, 0x2FD5], [0x2E80, 0x2EF3], [0xF900, 0xFAD9], [0x2F800, 0x2FA1D], [0x31C0, 0x31E3], [0x2FF0, 0x2FFB], [0x3105, 0x312F], [0x31A0, 0x31BA]]
 # block_han.sort(key=lambda x: x[0])
 
 
@@ -396,16 +409,15 @@ def is_hanzi(c):
     if character c is hanzi
     """
     point = ord(c)
-    if _block_han[0][0] <= point <= _block_han[-1][1]:
-        for a, b in _block_han:
-            if a <= point <= b:
-                return True
+    for a, b in _block_han:
+        if a <= point <= b:
+            return True
     return False
 
 
 def split_chars(line):
-    if not line:
-        return ''
+    if len(line)<=1:
+        return line
     l = ''
     for x in line:
         if is_hanzi(x):
@@ -430,8 +442,8 @@ def trunc_len(words,max_len=50,never_split=[]):
 
 # https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
 def split_category(line):
-    if not line:
-        return ''
+    if len(line)<=1:
+        return line
     l = ''
     cat0 = cat = ''
     for x in line:
@@ -459,8 +471,8 @@ def strip_accents(line):
 
 
 def split_lanugage(line):
-    if not line:
-        return ''
+    if len(line)<=1:
+        return line
     l = ''
     name0 = name = ''
     for x in line:
@@ -476,8 +488,8 @@ def split_lanugage(line):
 
 
 def split_punctuation(line):
-    if not line:
-        return ''
+    if len(line)<=1:
+        return line
     l = ''
     for x in line:
         cat = unicodedata.category(x)[0]
@@ -547,7 +559,7 @@ def read_char_names():
     print(len(ids), ' '.join(ids))
 
 
-class BasicTokenizer:
+class Langer:
     def __init__(self, max_len=50, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
         self.max_len=max_len
         self.do_lower_case = do_lower_case
@@ -591,4 +603,7 @@ class BasicTokenizer:
 
 if __name__ == "__main__":
     # _read_blocks()
-    get_block_han(_blocks)
+    # get_block_han(_blocks)
+    get_block_han()
+    for x in " (白":
+        print(is_hanzi(x))

@@ -5,6 +5,9 @@ tokenizer better than BERT
 
 ## tokenize
 
+This specification defines default mechanisms; more sophisticated implementations can and should tailor them for particular locales or environments. For example, reliable detection of word boundaries in languages such as Thai, Lao, Chinese, or Japanese requires the use of dictionary lookup, analogous to English hyphenation. An implementation therefore may need to provide means to override or subclass the default mechanisms described in this annex. Note that tailoring can either add boundary positions or remove boundary positions, compared to the defaults specified here. 
+(https://unicode.org/reports/tr29/#Sentence_Boundaries)
+
 ### use
 ```python
 from langer import Langer
