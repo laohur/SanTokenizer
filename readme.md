@@ -25,6 +25,7 @@ doc0 = """ 
 Langer
 BERT 
 
+```
 []
 []
 ['首', '先', '8', '.', '88', '设', '置', 'st', '。', 'art', '_', 'new', '_', 'word', '=', 'true', '和', 'output', '=', '[', 'acai', ']', '，', 'output', '就', '是', '最', '终', 'no', 'such', 'name', '"']
@@ -38,10 +39,7 @@ BERT
 ['est', '𗴂𗹭𘜶𗴲𗂧', ',', 'ou', '"', 'phiow', '-', 'bjij', '-', 'lhjij', '-', 'lhjij', '"', ',', 'ce', 'que', 'l', "'", 'on', 'peut', 'traduire', 'par', '«', 'pays', '-', 'grand', '-', 'blanc', '-', 'eleve', '»', '(', '白', '高', '大', '夏', '國', ')', '.']
 []
 []
-
-##  todo
-* segment sentence
-Some tool use ICU(https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html) to segment sentence for multi-languages. But ICU is hard to install.
+```
 
 ## License
 [Anti-996 License](https://github.com/996icu/996.ICU/blob/master/LICENSE)
