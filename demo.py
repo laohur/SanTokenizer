@@ -3,41 +3,41 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from langer import is_hanzi,split_chars,split_category,strip_accents,split_lanugage,split_punctuation,Langer
+from langer import is_hanzi, split_chars, split_category, strip_accents, split_lanugage, split_punctuation, Langer
 from tokenization import BasicTokenizer
 
 
-
 if __name__ == "__main__":
-    line=''
+    line = ''
     for i in range(128):
         try:
-            c=chr(i)
-            line+=c
+            c = chr(i)
+            line += c
         except:
             pass
-    line = '㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
+    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
     # s=line
-    s=split_chars(line)
-    s=split_category(line)
-    s=strip_accents(line)
-    s=split_lanugage(line)
-    s=split_punctuation(line)
+    s = split_chars(line)
+    s = split_category(line)
+    s = strip_accents(line)
+    s = split_lanugage(line)
+    s = split_punctuation(line)
 
     print(s)
-    for x in line :
+    for x in line:
         try:
-            c=unicodedata.category(x)
-            n=unicodedata.name(x)
-            print(x,c,n,is_hanzi(x))
+            c = unicodedata.category(x)
+            n = unicodedata.name(x)
+            print(x, c, n, is_hanzi(x))
         except:
-            print(x,c,'err')
+            print(x, c, 'err')
             pass
     # ['[', ']', 'viiipays', '-', 'grand', '-', 'blanc', '-', 'eleve', '»', '(', '白', '高', '大', '夏', '國', ')']
     # a=tokenizer=Langer()
-    a=tokenizer=Langer(do_lower_case=False)
+    a = tokenizer = Langer(do_lower_case=False)
     # b=tokenizer=BasicTokenizer()
-    b=tokenizer=BasicTokenizer(do_lower_case=False)
+    b = tokenizer = BasicTokenizer(do_lower_case=False)
+
     def test():
         doc0 = """ 
                 Ⅷ首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name"
@@ -47,21 +47,21 @@ if __name__ == "__main__":
             """
 
         for i, line in enumerate(doc0.split('\n')):
-            line=line.strip()
+            line = line.strip()
             # print(tokenizer.tokenize(line))
             print(a.tokenize(line))
             print(b.tokenize(line))
             # a.tokenize(line)
     test()
     s = 'วรรณพงษ์เป็นนักศึกษาชั้นปีที่หนึ่ง เรียนสาขาวิทยาการคอมพิวเตอร์และสารสนเทศคณะวิทยาศาสตร์ประยุกต์และวิศวกรรมศาสตร์อยู่ที่มหาวิทยาลัยขอนแก่นวิทยาเขตหนองคายยืมคืนทรัพยากรห้องสมุดเอกสารสัมมนาคอมพิวเตอร์ปัญญาประดิษฐ์กับการพัฒนาเกมแมวกินปลาหิวววไหมหลักสูตรใหม่สดสดทนได้'
-    s='ສົມເດັດພະເຈົ້າຢູ່ຫົວບໍຣົມໂກດຊົງທຳນຸບຳລຸງບ້ານເມືອງແລະພະສາດສະໜາຈົນກ່າວໄດ້ວ່າກຸງສີອະຍຸທະຢາໃນສະໄໝພະອົງນັ້ນເປັນຍຸກທີ່ບ້ານເມືອງດີ ມີຂຸນນາງຄົນສຳຄັນທີ່ເຕີບໂຕໃນເວລາຕໍ່ມາ ໃນລາຊະການຂອງພະອົງຫຼາຍຄົນ ເຊັ່ນ ສົມເດັດພະເຈົ້າກຸງທົນບຸລີ, ພະບາດສົມເດັດພະພຸດທະຍອດຟ້າຈຸລາໂລກມະຫາລາດ ເປັນຕົ້ນ ໃນທາງດ້ານວັນນະຄະດີກໍມີກະວີຄົນສຳຄັນ ເຊັ່ນ ເຈົ້າຟ້າທຳມາທິເບດໄຊຍະເຊດສຸລິຍະວົງ ກົມມະຂຸນເສນາພິທັກ ຫຼືເຈົ້າຟ້າກຸ້ງ ເຊິ່ງເປັນພະໂອລົດ ເປັນຕົ້ນ'
+    s = 'ສົມເດັດພະເຈົ້າຢູ່ຫົວບໍຣົມໂກດຊົງທຳນຸບຳລຸງບ້ານເມືອງແລະພະສາດສະໜາຈົນກ່າວໄດ້ວ່າກຸງສີອະຍຸທະຢາໃນສະໄໝພະອົງນັ້ນເປັນຍຸກທີ່ບ້ານເມືອງດີ ມີຂຸນນາງຄົນສຳຄັນທີ່ເຕີບໂຕໃນເວລາຕໍ່ມາ ໃນລາຊະການຂອງພະອົງຫຼາຍຄົນ ເຊັ່ນ ສົມເດັດພະເຈົ້າກຸງທົນບຸລີ, ພະບາດສົມເດັດພະພຸດທະຍອດຟ້າຈຸລາໂລກມະຫາລາດ ເປັນຕົ້ນ ໃນທາງດ້ານວັນນະຄະດີກໍມີກະວີຄົນສຳຄັນ ເຊັ່ນ ເຈົ້າຟ້າທຳມາທິເບດໄຊຍະເຊດສຸລິຍະວົງ ກົມມະຂຸນເສນາພິທັກ ຫຼືເຈົ້າຟ້າກຸ້ງ ເຊິ່ງເປັນພະໂອລົດ ເປັນຕົ້ນ'
     print(a.tokenize(s))
     # import timeit
     # print(timeit.timeit("unicodedata.category('c')",setup="import unicodedata",number=1000000))  # 0.08s
     # print(timeit.timeit("unicodedata.name('c').split(' ')[0]",setup="import unicodedata",number=1000000)) # 0.32s
     # print(timeit.timeit("unicodedata.name('c').split(' ')[0].strip()",setup="import unicodedata",number=1000000)) # 0.36s
     # print(timeit.timeit("test()",setup="from __main__ import test",number=10000)) # 11.02s
-    
+
 """ tokenize result (both basic)
 Langer
 BERT 

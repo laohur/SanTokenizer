@@ -352,8 +352,9 @@ def get_block(c, blocks, block_starts):
     else:
         return -1, -1, ''
 
+
 # http://yedict.com/zsts.htm
-blocks_raw="""
+blocks_raw = """
 4E00-9FA5
 9FA6-9FFF
 3400-4DB5
@@ -377,30 +378,20 @@ F900-FAD9
 31A0-31BA
 """
 
+
 def get_block_han():
     block_han = []
     for l in blocks_raw.split('\n'):
-        w=l.strip().split('-')
-        if len(w)!=2:
+        w = l.strip().split('-')
+        if len(w) != 2:
             continue
-        r=[ "0x"+x for x in w ]
+        r = ["0x"+x for x in w]
         block_han.append(r)
     print(block_han)
-            
-def get_block_han0(blocks):
-    block_han = []
-    for a, b, name in blocks:
-        for x in ["cjk",  "ideograph", "stroke", "kangxi"]:
-            if x in name.lower():
-                # print(a,b,name)
-                m = str(hex(a))
-                n = str(hex(b))
-                block_han.append([m, n])
-                print('['+m+','+n+'],')
-                break
 
 
-_block_han = [[0x4E00, 0x9FA5], [0x9FA6, 0x9FFF], [0x3400, 0x4DB5], [0x4DB6, 0x4DBF], [0x20000, 0x2A6D6], [0x2A6D7, 0x2A6DF], [0x2A700, 0x2B734], [0x2B740, 0x2B81D], [0x2B820, 0x2CEA1], [0x2CEB0, 0x2EBE0], [0x30000, 0x3134A], [0x31350, 0x323AF], [0x2F00, 0x2FD5], [0x2E80, 0x2EF3], [0xF900, 0xFAD9], [0x2F800, 0x2FA1D], [0x31C0, 0x31E3], [0x2FF0, 0x2FFB], [0x3105, 0x312F], [0x31A0, 0x31BA]]
+_block_han = [[0x4E00, 0x9FA5], [0x9FA6, 0x9FFF], [0x3400, 0x4DB5], [0x4DB6, 0x4DBF], [0x20000, 0x2A6D6], [0x2A6D7, 0x2A6DF], [0x2A700, 0x2B734], [0x2B740, 0x2B81D], [0x2B820, 0x2CEA1], [
+    0x2CEB0, 0x2EBE0], [0x30000, 0x3134A], [0x31350, 0x323AF], [0x2F00, 0x2FD5], [0x2E80, 0x2EF3], [0xF900, 0xFAD9], [0x2F800, 0x2FA1D], [0x31C0, 0x31E3], [0x2FF0, 0x2FFB], [0x3105, 0x312F], [0x31A0, 0x31BA]]
 # block_han.sort(key=lambda x: x[0])
 
 
@@ -408,6 +399,8 @@ def is_hanzi(c):
     """
     if character c is hanzi
     """
+    if c == '〇':
+        return True
     point = ord(c)
     for a, b in _block_han:
         if a <= point <= b:
@@ -416,7 +409,7 @@ def is_hanzi(c):
 
 
 def split_chars(line):
-    if len(line)<=1:
+    if len(line) <= 1:
         return line
     l = ''
     for x in line:
@@ -429,20 +422,23 @@ def split_chars(line):
         l += x
     return l
 
-def trunc_len(words,max_len=50,never_split=[]):
-    tokens=[]
+
+def trunc_len(words, max_len=50, never_split=[]):
+    tokens = []
     for x in words:
         if not x:
             continue
-        if len(x)<=50 or x in never_split :
+        if len(x) <= 50 or x in never_split:
             tokens.append(x)
         else:
-            tokens+=[ x[i:i+50] for i in range(0,len(x),max_len)  ]
+            tokens += [x[i:i+50] for i in range(0, len(x), max_len)]
     return tokens
 
 # https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
+
+
 def split_category(line):
-    if len(line)<=1:
+    if len(line) <= 1:
         return line
     l = ''
     cat0 = cat = ''
@@ -471,7 +467,7 @@ def strip_accents(line):
 
 
 def split_lanugage(line):
-    if len(line)<=1:
+    if len(line) <= 1:
         return line
     l = ''
     name0 = name = ''
@@ -488,7 +484,7 @@ def split_lanugage(line):
 
 
 def split_punctuation(line):
-    if len(line)<=1:
+    if len(line) <= 1:
         return line
     l = ''
     for x in line:
@@ -535,7 +531,7 @@ def trim_char_name(c):
 
 
 def read_char_names():
-    bigrams = gen_bigrams()
+    # bigrams = gen_bigrams()
     cats = set()
     ids = set()
     for l in open("NamesList.txt"):
@@ -561,7 +557,7 @@ def read_char_names():
 
 class Langer:
     def __init__(self, max_len=50, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
-        self.max_len=max_len
+        self.max_len = max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
@@ -576,7 +572,8 @@ class Langer:
             words = self.batch_token(strip_accents, words)
         words = self.batch_token(split_lanugage, words)
         words = self.batch_token(split_punctuation, words)
-        words = trunc_len(words,never_split=self.never_split,max_len=self.max_len)
+        words = trunc_len(words, never_split=self.never_split,
+                          max_len=self.max_len)
         return words
 
     def batch_token(self, fn, words):
@@ -598,12 +595,14 @@ class Langer:
             s = strip_accents(s)
         s = split_lanugage(s)
         s = split_punctuation(s)
-        tokens = trunc_len(s.split(),never_split=self.never_split,max_len=self.max_len)
+        tokens = trunc_len(
+            s.split(), never_split=self.never_split, max_len=self.max_len)
         return tokens
+
 
 if __name__ == "__main__":
     # _read_blocks()
     # get_block_han(_blocks)
     get_block_han()
-    for x in " (白":
+    for x in " 〇(白":
         print(is_hanzi(x))
