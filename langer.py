@@ -423,12 +423,12 @@ def split_chars(line):
     return l
 
 
-def trunc_len(words, max_len=50, never_split=set()):
+def trunc_len(words, max_len=50, never_split=None):
     tokens = []
     for x in words:
         if not x:
             continue
-        if len(x) <= max_len or x in never_split:
+        if len(x) <= max_len or (never_split and x in never_split):
             tokens.append(x)
         else:
             tokens += [x[i:i+max_len] for i in range(0, len(x), max_len)]
@@ -556,7 +556,7 @@ def read_char_names():
 
 
 class Langer:
-    def __init__(self, max_len=30, do_lower_case=True, never_split=set()):
+    def __init__(self, max_len=30, do_lower_case=True, never_split=None):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
@@ -567,7 +567,7 @@ class Langer:
         words = self.batch_token(split_category, words)
         if self.do_lower_case:
             for i in range(len(words)):
-                if words[i] not in self.never_split:
+                if not self.never_split or words[i] not in self.never_split:
                     words[i] = words[i].lower()
             words = self.batch_token(strip_accents, words)
         words = self.batch_token(split_lanugage, words)
@@ -581,7 +581,7 @@ class Langer:
         for x in words:
             if not x:
                 continue
-            if x in self.never_split:
+            if self.never_split and x in self.never_split:
                 tokens.append(x)
             else:
                 tokens += fn(x).split()
