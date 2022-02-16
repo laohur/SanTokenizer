@@ -428,10 +428,10 @@ def trunc_len(words, max_len=50, never_split=set()):
     for x in words:
         if not x:
             continue
-        if len(x) <= 50 or x in never_split:
+        if len(x) <= max_len or x in never_split:
             tokens.append(x)
         else:
-            tokens += [x[i:i+50] for i in range(0, len(x), max_len)]
+            tokens += [x[i:i+max_len] for i in range(0, len(x), max_len)]
     return tokens
 
 # https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
