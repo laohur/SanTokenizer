@@ -423,7 +423,7 @@ def split_chars(line):
     return l
 
 
-def trunc_len(words, max_len=50, never_split=[]):
+def trunc_len(words, max_len=50, never_split=set()):
     tokens = []
     for x in words:
         if not x:
@@ -556,7 +556,7 @@ def read_char_names():
 
 
 class Langer:
-    def __init__(self, max_len=30, do_lower_case=True, never_split=set("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")):
+    def __init__(self, max_len=30, do_lower_case=True, never_split=set()):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
