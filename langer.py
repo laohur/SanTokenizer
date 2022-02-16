@@ -561,8 +561,7 @@ class Langer:
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
-    def tokenize(self, line, max_len=30):
-        self.max_len = max_len
+    def tokenize(self, line):
         words = line.split()
         words = self.batch_token(split_chars, words)
         words = self.batch_token(split_category, words)
