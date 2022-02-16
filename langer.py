@@ -556,12 +556,13 @@ def read_char_names():
 
 
 class Langer:
-    def __init__(self, max_len=50, do_lower_case=True, never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")) -> None:
+    def __init__(self, max_len=30, do_lower_case=True, never_split=set("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
 
-    def tokenize(self, line):
+    def tokenize(self, line, max_len=30):
+        self.max_len = max_len
         words = line.split()
         words = self.batch_token(split_chars, words)
         words = self.batch_token(split_category, words)
