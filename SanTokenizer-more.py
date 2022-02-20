@@ -618,27 +618,3 @@ if __name__ == "__main__":
     get_block_han()
     for x in " 〇(白":
         print(is_hanzi(x))
-    line = ''
-    for i in range(128):
-        try:
-            c = chr(i)
-            line += c
-        except:
-            pass
-    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
-    # s=line
-    print(split_chars(line))
-    print(split_category(line))
-    print(strip_accents(line))
-    print(split_lanugage(line))
-    print(split_punctuation(line))
-    tokenizer = BasicTokenizer()
-    print(tokenizer.tokenize(line))
-    # for x in line:
-    #     try:
-    #         c = unicodedata.category(x)
-    #         n = unicodedata.name(x)
-    #         print(x, c, n, is_hanzi(x))
-    #     except:
-    #         print(x, c, 'err')
-    #         pass

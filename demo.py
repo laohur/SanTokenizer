@@ -14,30 +14,7 @@ def show(line, tokenizer):
 
 
 if __name__ == "__main__":
-    line = ''
-    for i in range(128):
-        try:
-            c = chr(i)
-            line += c
-        except:
-            pass
-    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
-    # s=line
-    s = split_chars(line)
-    s = split_category(line)
-    s = strip_accents(line)
-    s = split_lanugage(line)
-    s = split_punctuation(line)
 
-    print(s)
-    for x in line:
-        try:
-            c = unicodedata.category(x)
-            n = unicodedata.name(x)
-            print(x, c, n, is_hanzi(x))
-        except:
-            print(x, c, 'err')
-            pass
     # ['[', ']', 'viiipays', '-', 'grand', '-', 'blanc', '-', 'eleve', '»', '(', '白', '高', '大', '夏', '國', ')']
     # a=tokenizer=Langer()
     a = tokenizer = SanBasicTokenizer(do_lower_case=True, never_split=set([
