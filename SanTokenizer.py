@@ -555,7 +555,7 @@ def read_char_names():
     print(len(ids), ' '.join(ids))
 
 
-class Langer:
+class BasicTokenizer:
     def __init__(self, max_len=30, do_lower_case=True, never_split=None):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
