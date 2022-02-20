@@ -41,7 +41,8 @@ if __name__ == "__main__":
             pass
     # ['[', ']', 'viiipays', '-', 'grand', '-', 'blanc', '-', 'eleve', '»', '(', '白', '高', '大', '夏', '國', ')']
     # a=tokenizer=Langer()
-    a = tokenizer = SanBasicTokenizer(do_lower_case=True)
+    a = tokenizer = SanBasicTokenizer(do_lower_case=True, never_split=set([
+        "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"]))
     # b=tokenizer=BasicTokenizer()
     b = tokenizer = BertBasicTokenizer(do_lower_case=True)
 
