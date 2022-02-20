@@ -408,19 +408,28 @@ def is_hanzi(c):
     return False
 
 
+def is_iso_char(char):
+    if is_hanzi(char):
+        return True
+    m, n, name = get_block(char, _blocks, _block_starts)
+    if n-m+1 > 256:
+        return True
+    return False
+
+
 def split_chars(line):
     if len(line) <= 1:
-        return line
-    l = ''
+        return [line]
+    tokens = []
     for x in line:
-        if is_hanzi(x):
-            x = ' '+x+' '
+        if is_iso_char(x):
+            tokens.append(' ')
+            tokens.append(x)
+            tokens.append(' ')
         else:
-            m, n, name = get_block(x, _blocks, _block_starts)
-            if n-m+1 > 256:
-                x = ' '+x+' '
-        l += x
-    return l
+            tokens.append(x)
+    w = ''.join(tokens).split()
+    return [x for x in w if x]
 
 
 def trunc_len(words, max_len=50, never_split=None):
@@ -563,8 +572,11 @@ class BasicTokenizer:
 
     def tokenize(self, line):
         words = line.split()
-        words = self.batch_token(split_chars, words)
-        words = self.batch_token(split_category, words)
+        tokens = []
+        for x in words:
+            tokens += split_chars(x)
+        # words = self.batch_token(split_chars, words)
+        words = self.batch_token(split_category, tokens)
         if self.do_lower_case:
             for i in range(len(words)):
                 if not self.never_split or words[i] not in self.never_split:
