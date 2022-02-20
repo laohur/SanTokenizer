@@ -504,66 +504,6 @@ def split_punctuation(line):
     return l
 
 
-def gen_bigrams():
-    sets = []
-    for i in range(ord('0'), ord('9')+1):
-        sets.append(chr(i))
-    for i in range(ord('a'), ord('z')+1):
-        sets.append(chr(i))
-    words = set()
-    for x in sets:
-        words.add(x)
-        for y in sets:
-            words.add(x+y)
-    return words
-
-
-def trim(line):
-    while line and not '0' <= line[0] <= '9' and not 'a' <= line[0] <= 'z':
-        line = line[1:]
-    while line and not '0' <= line[-1] <= '9' and not 'a' <= line[-1] <= 'z':
-        line = line[:-1]
-    return line
-
-
-def trim_char_name(c):
-    names = unicodedata.name(c).split(' ')
-    a = names[0]
-    b = names[-1]
-    if '-' in a:
-        a = a.split('-')[0]
-    if '-' in b:
-        b = b.split('-')[-1]
-    a = trim(a.lower())  # cat
-    b = trim(b.lower())  # index
-    return a[:2], b[-2:]
-
-
-def read_char_names():
-    # bigrams = gen_bigrams()
-    cats = set()
-    ids = set()
-    for l in open("NamesList.txt"):
-        l = l.rstrip()
-        if not l or l[0] in ['\t', '@', ' ', ';'] or '\t' not in l:
-            continue
-        names = l.split('\t')[-1].split(' ')
-        a = names[0].lower()
-        b = names[-1].lower()
-        if '-' in a:
-            a = a.split('-')[0]
-        if '-' in b:
-            b = b.split('-')[-1]
-        a = trim(a)
-        b = trim(b)
-
-        cats.add(a[:2])
-        ids.add(b[-2:])
-
-    print(len(cats), ' '.join(cats))
-    print(len(ids), ' '.join(ids))
-
-
 class BasicTokenizer:
     def __init__(self, max_len=30, do_lower_case=True, never_split=None):
         self.max_len = max_len
