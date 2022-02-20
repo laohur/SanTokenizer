@@ -3,7 +3,27 @@
 language processor
 tokenizer better than BERT
 
+## 切词规格
+\n空格\t先切
+在never_split中不切
+
+若小写：NFD规范化，忽略Mn，Punctuation切割
+
+净化
+独字左右间隔
+类目不同间隔
+
+语言不同切割
+
+长度切割
+
+组词规则：
+忽略Mn
+同为L，或者N，且同类语言，才组词
+
 ## tokenize
+
+
 
 This specification defines default mechanisms; more sophisticated implementations can and should tailor them for particular locales or environments. For example, reliable detection of word boundaries in languages such as Thai, Lao, Chinese, or Japanese requires the use of dictionary lookup, analogous to English hyphenation. An implementation therefore may need to provide means to override or subclass the default mechanisms described in this annex. Note that tailoring can either add boundary positions or remove boundary positions, compared to the defaults specified here. 
 (https://unicode.org/reports/tr29/#Sentence_Boundaries)
