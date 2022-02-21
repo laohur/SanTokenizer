@@ -573,7 +573,7 @@ def normalize(line, do_lower_case=True, normal_type="NFD"):
     return l
 
 
-def char_split(line,split_mark=True):
+def char_split(line, split_mark=True):
     chars = []
     name0 = name = ' '
     cat0 = cat = ' '
@@ -626,17 +626,18 @@ class BasicTokenizer:
                 continue
             else:
                 ts = char_split(x)
-                
+
                 if self.do_lower_case:
-                    tsl=[]
+                    tsl = []
                     for t in ts:
-                        s=normalize(t)
-                        if len(s)==len(t):
+                        r = t.lower()
+                        s = unicodedata.normalize("NFD", r)
+                        if s == r:
                             tsl.append(s)
                         else:
-                            us=char_split(s,split_mark=False)
-                            tsl+=us
-                    ts=tsl
+                            us = char_split(s, split_mark=False)
+                            tsl += us
+                    ts = tsl
 
                 if self.max_len <= 0:
                     tokens += ts
