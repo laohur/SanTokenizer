@@ -631,8 +631,11 @@ class BasicTokenizer:
                     tsl=[]
                     for t in ts:
                         s=normalize(t)
-                        us=char_split(s,split_mark=False)
-                        tsl+=us
+                        if len(s)==len(t):
+                            tsl.append(s)
+                        else:
+                            us=char_split(s,split_mark=False)
+                            tsl+=us
                     ts=tsl
 
                 if self.max_len <= 0:
