@@ -351,7 +351,7 @@ def get_block(c, blocks, block_starts):
     if 0 <= idx <= len(blocks) and blocks[idx][0] <= point <= blocks[idx][1]:
         return blocks[idx]
     else:
-        return -1, -1, ''
+        return -1, 0xffffffff, 'invalid'
 
 
 # http://yedict.com/zsts.htm
