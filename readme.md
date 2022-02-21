@@ -1,7 +1,7 @@
-# langer
+# ZiTokenizer
 
-language processor
-tokenizer better than BERT
+tokenize line to Zi
+work for all languages
 
 ## 切词规格
 \n空格\t先切
@@ -30,8 +30,8 @@ This specification defines default mechanisms; more sophisticated implementation
 
 ### use
 ```python
-from langer import Langer
-tokenizer=Langer()
+from ZiTokenizer import BasicTokenizer
+tokenizer=BasicTokenizer()
 
 doc0 = """ 
         首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name"
@@ -39,10 +39,11 @@ doc0 = """ 
         하는데 카운터가 어디에 있어요ꆃꎭꆈꌠꊨꏦꏲꅉꆅꉚꅉꋍꂷꂶꌠلأحياء تمارين تتطلب من [MASK] [PAD] [CLS][SEP]
         est 𗴂𗹭𘜶𗴲𗂧, ou "phiow-bjij-lhjij-lhjij", ce que l'on peut traduire par « pays-grand-blanc-élevé » (白高大夏國). 
     """
+tokenizer.tokenize(doc0)
 ```
 
 ### result 
-Langer
+ZiTokenizer
 BERT 
 
 ```
