@@ -630,8 +630,8 @@ class BasicTokenizer:
                 if self.do_lower_case:
                     tsl=[]
                     for t in ts:
-                        t=normalize(t)
-                        us=char_split(t,split_mark=False)
+                        s=normalize(t)
+                        us=char_split(s,split_mark=False)
                         tsl+=us
                     ts=tsl
 
