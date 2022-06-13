@@ -1,7 +1,6 @@
-# ZiTokenizer
+# UnicodeTokenizer
 
-tokenize line to Zi
-work for all languages
+tokenize for all Unicode text
 
 ## 切词规格
 \n空格\t先切
