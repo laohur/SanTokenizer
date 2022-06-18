@@ -3,7 +3,7 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from UnicodeTokenizer import  BasicTokenizer as SanBasicTokenizer
+from UnicodeTokenizer import  BasicTokenizer as BasicTokenizer
 from BertTokenization import BasicTokenizer as BertBasicTokenizer
 
 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # ['[', ']', 'viiipays', '-', 'grand', '-', 'blanc', '-', 'eleve', '»', '(', '白', '高', '大', '夏', '國', ')']
     # a=tokenizer=Langer()
-    a = tokenizer = SanBasicTokenizer(do_lower_case=True, never_split=set([
+    a = tokenizer = BasicTokenizer(do_lower_case=True, never_split=set([
         "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"]))
     # b=tokenizer=BasicTokenizer()
     b = tokenizer = BertBasicTokenizer(do_lower_case=True)

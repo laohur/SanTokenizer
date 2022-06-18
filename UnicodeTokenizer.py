@@ -506,6 +506,7 @@ def split_punctuation(line):
         l += x
     return l
 
+
 def char_name(x):
     try:
         name = unicodedata.name(x).split(' ')[0]
@@ -581,32 +582,20 @@ class BasicTokenizer:
                 if self.do_lower_case:
                     tsl = []
                     for t in ts:
-                        # if t[0] == "Ⅷ":
-                            # d = 0
-
-                        # s=normalize(t)
-                        # us = char_split(s, split_mark=False)
-                        # tsl += us
-
-
-                        r = t.lower()
-                        s = unicodedata.normalize("NFD", r)
-                        if s == r:
-                            tsl.append(s)
-                        else:
-                            us = char_split(s, split_mark=False)
-                            tsl += us
+                        s = normalize(t)
+                        us = char_split(s, split_mark=False)
+                        tsl += us
                     ts = tsl
 
-                if self.max_len <= 0:
-                    tokens += ts
-                else:
+                if self.max_len > 0:
+                    ts1 = []
                     for s in ts:
-                        if len(s) <= self.max_len:
-                            tokens.append(s)
-                        else:
-                            tokens += [s[i:i+self.max_len]
-                                       for i in range(0, len(s), self.max_len)]
+                        ts1 += [s[i:i+self.max_len]
+                                for i in range(0, len(s), self.max_len)]
+                    ts = ts1
+
+                tokens += ts
+        tokens = [x for x in tokens if x]
         return tokens
 
 
