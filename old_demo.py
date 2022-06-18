@@ -4,7 +4,7 @@ import os
 import unicodedata
 from timeit import repeat
 from langer import is_hanzi, split_chars, split_category, strip_accents, split_lanugage, split_punctuation, Langer
-from tokenization import BasicTokenizer
+from BertTokenization import BasicTokenizer
 
 
 def show(line, tokenizer):

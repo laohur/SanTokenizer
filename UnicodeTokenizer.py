@@ -506,55 +506,6 @@ def split_punctuation(line):
         l += x
     return l
 
-
-class BasicTokenizer0:
-    def __init__(self, max_len=30, do_lower_case=True, never_split=None):
-        self.max_len = max_len
-        self.do_lower_case = do_lower_case
-        self.never_split = never_split
-
-    def tokenize(self, line):
-        words = line.split()
-        tokens = []
-        for x in words:
-            tokens += split_chars(x)
-        # words = self.batch_token(split_chars, words)
-        words = self.batch_token(split_category, tokens)
-        if self.do_lower_case:
-            for i in range(len(words)):
-                if not self.never_split or words[i] not in self.never_split:
-                    words[i] = words[i].lower()
-            words = self.batch_token(strip_accents, words)
-        words = self.batch_token(split_lanugage, words)
-        words = self.batch_token(split_punctuation, words)
-        words = trunc_len(words, never_split=self.never_split,
-                          max_len=self.max_len)
-        return words
-
-    def batch_token(self, fn, words):
-        tokens = []
-        for x in words:
-            if not x:
-                continue
-            if self.never_split and x in self.never_split:
-                tokens.append(x)
-            else:
-                tokens += fn(x).split()
-        return [x for x in tokens if x]
-
-    def tokenize_all(self, line):
-        s = line
-        s = split_chars(s)
-        s = split_category(s)
-        if self.do_lower_case:
-            s = strip_accents(s)
-        s = split_lanugage(s)
-        s = split_punctuation(s)
-        tokens = trunc_len(
-            s.split(), never_split=self.never_split, max_len=self.max_len)
-        return tokens
-
-
 def char_name(x):
     try:
         name = unicodedata.name(x).split(' ')[0]

@@ -3,8 +3,8 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from ZiTokenizer import is_hanzi, split_chars, split_category, strip_accents, split_lanugage, split_punctuation, BasicTokenizer as SanBasicTokenizer
-from tokenization import BasicTokenizer as BertBasicTokenizer
+from UnicodeTokenizer import  BasicTokenizer as SanBasicTokenizer
+from BertTokenization import BasicTokenizer as BertBasicTokenizer
 
 
 def show(line, tokenizer):

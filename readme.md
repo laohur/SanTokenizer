@@ -29,7 +29,7 @@ This specification defines default mechanisms; more sophisticated implementation
 
 ### use
 ```python
-from ZiTokenizer import BasicTokenizer
+from UnicodeTokenizer import BasicTokenizer
 tokenizer=BasicTokenizer()
 
 doc0 = """ 
@@ -42,8 +42,8 @@ tokenizer.tokenize(doc0)
 ```
 
 ### result 
-ZiTokenizer
-BERT 
+UnicodeTokenizer
+BertTokenizer
 
 ```
 []
