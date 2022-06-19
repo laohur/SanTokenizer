@@ -575,8 +575,7 @@ class BasicTokenizer:
         self.never_split = never_split
         self.chars = self.load_chars()
 
-    def load_chars(self):
-        max_unicode = int(1e6)
+    def load_chars(self,        max_unicode=0x110000):
         chars = [chr(x) for x in range(max_unicode)]
         for i, x in enumerate(chars):
             cat = unicodedata.category(x)[0]
@@ -668,7 +667,8 @@ if __name__ == "__main__":
             line += c
         except:
             pass
-    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-b\tlanc-élevé » (白高大夏國)'
+    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-b\tlanc-élevé » (白高大夏國)'+chr(
+        0x110000-1)
     # line = "=True"
     print("split_chars", split_chars(line))
     print("split_category", split_category(line))
@@ -691,7 +691,8 @@ if __name__ == "__main__":
 
     import time
     t0 = time.time()
-    for i in range(int(1e4)):
+    for i in range(10000):
+        # chr(i)  # ValueError: chr() arg not in range(0x110000)
         tokenizer.tokenize(line)
     t1 = time.time()
     print(t1-t0)
