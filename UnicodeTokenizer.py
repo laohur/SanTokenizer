@@ -582,9 +582,13 @@ class BasicTokenizer:
                 if self.do_lower_case:
                     tsl = []
                     for t in ts:
-                        s = normalize(t)
-                        us = char_split(s, split_mark=False)
-                        tsl += us
+                        t=t.lower()
+                        s = normalize(t,do_lower_case=False)
+                        if s==t:
+                            tsl.append(t)
+                        else:
+                            us = char_split(s, split_mark=False)
+                            tsl += us
                     ts = tsl
 
                 if self.max_len > 0:
