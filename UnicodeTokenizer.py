@@ -562,14 +562,66 @@ def char_split(line, split_mark=True):
     return tokens
 
 
+def blank_split(line):
+    l = ''.join([x if x else ' ' for x in line])
+    tokens = [x for x in l.split() if x]
+    return tokens
+
+
 class BasicTokenizer:
     def __init__(self, max_len=-1, do_lower_case=True, never_split=None):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
         self.never_split = never_split
+        self.chars = self.load_chars()
+
+    def load_chars(self):
+        max_unicode = int(1e6)
+        chars = [chr(x) for x in range(max_unicode)]
+        for i, x in enumerate(chars):
+            cat = unicodedata.category(x)[0]
+            name = char_name(x)
+            isolate = is_iso_char(x)
+            chars[i] = (cat, name, isolate)
+        return chars
+
+    def char_split(self, line, split_mark=True):
+        if not line:
+            return []
+        chars = []
+        start_new_word = False
+        cat0, name0, isolate0 = self.chars[ord(line[0])]
+        for i, x in enumerate(line):
+            if start_new_word and split_mark:
+                chars.append(' ')
+                start_new_word = False
+            cat, name, isolate = self.chars[ord(x)]
+            if cat in 'CZ':
+                chars.append(' ')
+            elif cat in 'PS' or isolate:
+                chars.append(' ')
+                chars.append(x)
+                chars.append(' ')
+            elif cat in 'LN':
+                if i >= 1:
+                    # cat0,name0,isolate0=self.chars[ord(line[i-1])]
+                    if cat != cat0 or name != name0:
+                        chars.append(' ')
+                chars.append(x)
+            elif cat in 'M':
+                start_new_word = True
+                continue  # not update
+            else:
+                raiseExceptions(f"{x} cat{cat} not in LMNPSZC")
+            cat0 = cat
+            name0 = name
+
+        l = ''.join(chars)
+        tokens = blank_split(l)
+        return tokens
 
     def tokenize(self, line):
-        words = line.strip().split()
+        words = blank_split(line)
         tokens = []
         for x in words:
             if self.never_split and x in self.never_split:
@@ -577,17 +629,17 @@ class BasicTokenizer:
             elif not x:
                 continue
             else:
-                ts = char_split(x)
+                ts = self.char_split(x)
 
                 if self.do_lower_case:
                     tsl = []
                     for t in ts:
-                        t=t.lower()
-                        s = normalize(t,do_lower_case=False)
-                        if s==t:
+                        t = t.lower()
+                        s = normalize(t, do_lower_case=False)
+                        if s == t:
                             tsl.append(t)
                         else:
-                            us = char_split(s, split_mark=False)
+                            us = self.char_split(s, split_mark=False)
                             tsl += us
                     ts = tsl
 
@@ -616,25 +668,30 @@ if __name__ == "__main__":
             line += c
         except:
             pass
-    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'
-    # s=line
+    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-b\tlanc-élevé » (白高大夏國)'
+    # line = "=True"
     print("split_chars", split_chars(line))
     print("split_category", split_category(line))
     print("strip_accents", strip_accents(line))
     print("split_lanugage", split_lanugage(line))
     print("split_punctuation", split_punctuation(line))
 
-    tokenizer = BasicTokenizer()
-    print(tokenizer.tokenize(line))
+    print("blank_split", blank_split(line))
     l2 = normalize(line)
     print(l2)
     print(char_split(line))
     print(char_split(l2))
-    # for x in line:
-    #     try:
-    #         c = unicodedata.category(x)
-    #         n = unicodedata.name(x)
-    #         print(x, c, n, is_hanzi(x))
-    #     except:
-    #         print(x, c, 'err')
-    #         pass
+
+    tokenizer = BasicTokenizer()
+    print(tokenizer.tokenize(line))
+    print(tokenizer.tokenize(line))
+    import timeit
+    # re=timeit.timeit("''.join(chr(x) for x in range(int(1e6))) ")
+    # print(re)
+
+    import time
+    t0 = time.time()
+    for i in range(int(1e4)):
+        tokenizer.tokenize(line)
+    t1 = time.time()
+    print(t1-t0)
