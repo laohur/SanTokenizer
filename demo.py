@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import glob
 from collections import Counter
 import os

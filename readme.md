@@ -1,6 +1,6 @@
 # UnicodeTokenizer
 
-tokenize for all Unicode text
+UnicodeTokenizer: tokenize all Unicode text
 
 ## 切词规则 Tokenize Rules
 * 空白切分 split on blank： '\n', ' ', '\t'
@@ -18,7 +18,7 @@ tokenize for all Unicode text
 ## use
 ```python
 from UnicodeTokenizer import UnicodeTokenizer
-tokenizer=BasicTokenizer()
+tokenizer=UnicodeTokenizer()
 
 doc0 = """ 
         首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name"
@@ -26,7 +26,7 @@ doc0 = """ 
         하는데 카운터가 어디에 있어요ꆃꎭꆈꌠꊨꏦꏲꅉꆅꉚꅉꋍꂷꂶꌠلأحياء تمارين تتطلب من [MASK] [PAD] [CLS][SEP]
         est 𗴂𗹭𘜶𗴲𗂧, ou "phiow-bjij-lhjij-lhjij", ce que l'on peut traduire par « pays-grand-blanc-élevé » (白高大夏國). 
     """
-tokenizer.tokenize(doc0)
+print(tokenizer.tokenize(doc0))
 ```
 
 ## result 
