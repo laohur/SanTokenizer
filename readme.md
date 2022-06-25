@@ -16,6 +16,8 @@ UnicodeTokenizer: tokenize all Unicode text
 
 
 ## use
+> pip install UnicodeTokenizer
+
 ```python
 from UnicodeTokenizer import UnicodeTokenizer
 tokenizer=UnicodeTokenizer()
