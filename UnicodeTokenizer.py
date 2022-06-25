@@ -12,7 +12,8 @@ def get_block(c):
     if 0 <= idx <= len(Blocks) and Blocks[idx][0] <= point <= Blocks[idx][1]:
         return Blocks[idx]
     else:
-        return -1, 0xffffffff, 'invalid',0
+        return -1, 0xffffffff, 'invalid', 0
+
 
 def detect_hanzi(c):
     """
@@ -21,8 +22,9 @@ def detect_hanzi(c):
     m, n, name, is_hanzi = get_block(c)
     return is_hanzi
 
+
 def is_iso_char(c):
-    m, n, name,is_hanzi = get_block(c)
+    m, n, name, is_hanzi = get_block(c)
     if is_hanzi:
         return True
     if n-m+1 > 256:
@@ -180,7 +182,7 @@ def blank_split(line):
     return tokens
 
 
-class BasicTokenizer:
+class UnicodeTokenizer:
     def __init__(self, max_len=-1, do_lower_case=True, never_split=None):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
@@ -291,7 +293,7 @@ if __name__ == "__main__":
     print(char_split(line))
     print(char_split(l2))
 
-    tokenizer = BasicTokenizer()
+    tokenizer = UnicodeTokenizer()
     print(tokenizer.tokenize(line))
     print(tokenizer.tokenize(line))
     import timeit
