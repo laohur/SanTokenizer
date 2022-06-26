@@ -5,8 +5,11 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from UnicodeTokenizer import UnicodeTokenizer
+from UnicodeTokenizer.UnicodeTokenizer import UnicodeTokenizer
 from BertTokenization import BasicTokenizer as BertBasicTokenizer
+
+from setuptools import setup, find_packages
+print(find_packages())
 
 
 def demo(doc):
@@ -22,7 +25,7 @@ def demo(doc):
         result.append(row)
     # result='\n'.join(result)
     print(result)
-    with open("result.tsv", "w") as f:
+    with open("data/result.tsv", "w") as f:
         for row in result:
             f.write(row+'\n')
 

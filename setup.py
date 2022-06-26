@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
-from os import path
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(path.join(here, 'readme.md')) as f:
+with open(os.path.join(here, 'readme.md')) as f:
     long_description = f.read()
 
 
 setup(
     name="UnicodeTokenizer",
     packages=find_packages(),
-    version='0.0.1',
+    version='0.0.2',
     description='UnicodeTokenizer: tokenize all Unicode text',
     long_description=long_description,
     long_description_content_type="text/markdown",

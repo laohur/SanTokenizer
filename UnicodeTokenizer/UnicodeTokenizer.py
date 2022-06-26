@@ -4,7 +4,8 @@ import bisect
 from logging import raiseExceptions
 import unicodedata
 
-from Blocks import Blocks
+# from Blocks import Blocks
+from UnicodeTokenizer.Blocks import Blocks
 BlockStarts = [x[0] for x in Blocks]
 
 

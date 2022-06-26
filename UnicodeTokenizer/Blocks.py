@@ -50,7 +50,9 @@ https://unicode-table.com/cn/blocks/
 # raw_han_keyword = """ CJK Ideographic Ideographs Kanbun Radicals Bopomofo """
 # keywords = raw_han_keyword.split()
 # keywords = [x.lower() for x in keywords if x]
-keywords=['cjk', 'ideographic', 'ideographs', 'kanbun', 'radicals', 'bopomofo']
+keywords = ['cjk', 'ideographic', 'ideographs',
+            'kanbun', 'radicals', 'bopomofo']
+
 
 def is_han_block(name, keywords):
     words = name.split(' ')
@@ -67,7 +69,7 @@ def read_blocks():
     doc = []
     blocks = []
     num_han = 0
-    for line in open("Blocks.txt"):
+    for line in open("data/Blocks.txt"):
         line = line.strip()
         if not line or line[0] == '#':
             continue
@@ -88,7 +90,7 @@ def read_blocks():
             num_han += int(n, base=16)-int(m, base=16)+1
         # doc.append(line)
     # print("==blocks==")
-    tgt = "BlocksWithHan.txt"
+    tgt = "data/BlocksWithHan.txt"
     with open(tgt, 'w') as f:
         for row in blocks:
             l = '\t'.join(str(x) for x in row)
