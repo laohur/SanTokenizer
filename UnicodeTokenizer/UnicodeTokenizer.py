@@ -189,7 +189,7 @@ class UnicodeTokenizer:
     def __init__(self, max_len=-1, do_lower_case=True, never_split=None):
         self.max_len = max_len
         self.do_lower_case = do_lower_case
-        self.never_split = never_split
+        self.never_split = set(x for x in never_split) if never_split else set()
         self.chars = self.load_chars()
 
     def load_chars(self,        max_unicode=0x110000):
@@ -240,7 +240,7 @@ class UnicodeTokenizer:
         words = blank_split(line)
         tokens = []
         for x in words:
-            if self.never_split and x in self.never_split:
+            if x in self.never_split:
                 tokens.append(x)
             elif not x:
                 continue
@@ -252,7 +252,7 @@ class UnicodeTokenizer:
                     for t in ts:
                         t = t.lower()
                         s = normalize(t, do_lower_case=False)
-                        if s == t:
+                        if s in self.never_split or s == t:
                             tsl.append(t)
                         else:
                             us = self.char_split(s, split_mark=False)
