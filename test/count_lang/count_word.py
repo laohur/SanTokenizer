@@ -1,7 +1,6 @@
-import lzma
+import math
 import shutil
-from store import lang_files
-from multiprocessing import Pool
+from store import get_langs, lang_files
 import glob
 from collections import Counter
 import os
@@ -34,7 +33,7 @@ def count_files(files):
             n_line += 1
             if not l:
                 continue
-            if n_line==1 and max([ord(x) for x in l])<128:  # bad msg
+            if n_line == 1 and max([ord(x) for x in l]) < 128:  # bad msg
                 continue
             tokens = token(l)
             for x in tokens:
@@ -63,7 +62,7 @@ def scan_lang(lang):
     if os.path.exists(tgt):
         # os.remove(tgt)
         logger.warning(f"{tgt} 存在")
-        return 
+        return
     counter = count_files(files)
     if not counter:
         logger.warning(f" word_counter:{len(counter)} --> None  ")
@@ -72,66 +71,65 @@ def scan_lang(lang):
             logger.warning(f"{dir} removed")
         return lang+" 0"
 
-
-    words = [(k,v) for k,v in counter.items()]
+    words = list(counter.items())
     del counter
     words.sort(key=lambda x: (-x[1], len(x[0]), x[0]))
     with open(tgt, "w") as f:
-        for k,v in words:
+        for k, v in words:
             f.write(f"{k}\t{v}"+'\n')
     logger.info(f" word_counter:{len(words)} --> {tgt}  ")
     return lang+f' {len(words)}'
 
 
-def load(p):
+def load_frequency(p, max_len=20):
+    raw = open(p).read().splitlines()
+    doc = [x.split('\t') for x in raw]
+    doc = [(x[0], int(x[1])) for x in doc]
+    # doc = [x for x in doc if x[1]!=1 or len(x[0])<20 ]
+    logger.info(f" {p} load {len(doc)} words")
+    return doc
+
+
+def coung_global():
     counter = Counter()
-    t = 0
-    for l in open(p):
-        t += 1
-        l = l.strip()
-        w = l.split('\t')
-        k = w[0]
-        v = int(w[1])
-        counter[k] += v
-    logger.info(f" {p} --> total:{t} word_counter:{len(counter)} ")
-    return counter
+    langs = get_langs()
 
-
-def merge_lang(lang):
-    dir = lang
-    tgt = f"{dir}/word_frequency.tsv"
-    counter = load(tgt)
-    words = list(counter)
-    words.sort(key=lambda x: (-counter[x], len(x), x))
+    # freq_path=f"C:/data/languages/*/word_frequency.tsv"
+    freq_paths = [
+        f"C:/data/languages/{lang}/word_frequency.tsv" for lang in langs]
+    # pipe='cat '+' '.join(freq_paths)
+    for src in freq_paths:
+        if not os.path.exists(src):
+            continue
+        for l in open(src):
+            l = l.strip()
+            w = l.split('\t')
+            k, v = w
+            v = int(v)
+            if v <= 1:
+                k = ' '
+            counter[k] += math.sqrt(v)
+        logger.info(f"src：{src} counter:{len(counter)}")
+    words = [(k, int(v)) for k, v in counter.items()]
+    del counter
+    words.sort(key=lambda x: (-x[1], len(x[0]), x[0]))
+    total = 0
+    tgt = f"C:/data/languages/global/word_frequency.tsv"
     with open(tgt, "w") as f:
-        for k in words:
-            v = counter[k]
+        for k, v in words:
             f.write(f"{k}\t{v}"+'\n')
-    logger.info(f" word_counter:{len(counter)} --> {tgt}")
+            total += 1
+    logger.info(f" word_counter:{total} --> {tgt}")
 
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', default="global",  type=str)
-    # parser.add_argument('--lang', default="yo",  type=str)
     args = parser.parse_args()
     print(args)
-    # lang = args.lang
-    lang = "aa"
 
-    scan_lang(lang)
-    # merge_lang(lang)
-
-    # langs=['ar','en','fr','ja','ru','zh','th','sw','ur']
-    # for lang in langs:
-    # count_lang(lang)
-    # lang_sentence(lang)
-    # from store import get_langs
-    # import os
-    # # import subprocess
+    coung_global()
     # langs = get_langs()
     # for lang in langs:
-    #     # if lang =='zh':
-    #     # continue
     #     scan_lang(lang)

@@ -1,11 +1,11 @@
 
-from langer import Langer
 from logzero import logger
 from collections import Counter
 import os,glob
 import math
+from UnicodeTokenizer.UnicodeTokenizer import UnicodeTokenizer
 
-tokenizer=Langer()
+tokenizer=UnicodeTokenizer()
 
 def tokenize(x):
     return tokenizer.tokenize(x)
@@ -75,7 +75,6 @@ def read_hot(lang):
     import logzero
     dir=lang
     os.makedirs(dir,exist_ok=True)
-    # logzero.logfile(f"{dir}/bomb.log",mode='w')
     t=f"{dir}/cover5.txt"
     hot=set()
     for l in open(t):
