@@ -12,7 +12,7 @@ with open(os.path.join(here, 'readme.md')) as f:
 setup(
     name="UnicodeTokenizer",
     packages=find_packages(),
-    version='0.0.3',
+    version='0.0.4',
     description='UnicodeTokenizer: tokenize all Unicode text',
     long_description=long_description,
     long_description_content_type="text/markdown",
