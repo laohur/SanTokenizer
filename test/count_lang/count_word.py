@@ -106,7 +106,7 @@ def coung_global():
             w = l.split('\t')
             k, v = w
             v = int(v)
-            if v <= 1:
+            if v <= 2 or len(k)>=20:
                 k = ' '
             counter[k] += math.sqrt(v)
         logger.info(f"src：{src} counter:{len(counter)}")
