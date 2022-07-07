@@ -86,9 +86,6 @@ def load_frequency(p, max_len=20):
     for i in range(len(doc)):
         k, v = doc[i].split('\t')[:2]
         doc[i] = (k, int(v))
-    # doc = [x.split('\t') for x in doc]
-    # doc = [(x[0], int(x[1])) for x in doc]
-    # doc = [x for x in doc if x[1]!=1 or len(x[0])<20 ]
     logger.info(f" {p} load {len(doc)} words")
     return doc
 
@@ -111,8 +108,6 @@ def coung_global():
             v = int(v)
             if v <= 1 or len(k) >= 20:
                 k = ' '
-                continue
-            # counter[k] += v
             counter[k] += math.sqrt(v)
         logger.info(f"src：{src} counter:{len(counter)}")
     words = [(k, int(v)) for k, v in counter.items()]
