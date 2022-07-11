@@ -64,16 +64,16 @@ def read_frequency(p):
 
 def load_frequency(p):
     # counter=Counter()
-    for i, l in enumerate(read(p)):
-        w = l.split()
+    for i, l in enumerate(read1(p)):
+        w = l.strip().split()
         if len(w) != 2:
             continue
-        word = w[0]
-        num = int(w[1])
+        word, num = w
+        num = int(num)
         if num == 1:
             continue
         # counter[word]+=num
-        yield word, num
+        yield (word, num)
     # logger.info(f"  {p}  lines:{i} counter:{len(counter)} ")
 
     # return counter
@@ -82,7 +82,7 @@ def load_frequency(p):
 if __name__ == "__main__":
     # load_frequency(f"../lang/ab/word_frequency.txt.xz")
     names = set()
-    tails=set()
+    tails = set()
     for i in range(0x110000):
         c = chr(i)
         try:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
             name = unicodedata.category(c)
         # r = name.split()[-1].split('-')[-1].lower()
         tail = name.split()[-1].lower()
-        r=name[:2].lower()
+        r = name[:2].lower()
         names.add(r)
     print(tails)
     print(len(tails))

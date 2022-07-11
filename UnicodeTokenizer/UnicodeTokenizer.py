@@ -186,8 +186,7 @@ def blank_split(line):
 
 
 class UnicodeTokenizer:
-    def __init__(self, max_len=-1, do_lower_case=True, never_split=set()):
-        self.max_len = max_len
+    def __init__(self,  do_lower_case=True, never_split=set()):
         self.do_lower_case = do_lower_case
         self.never_split = set(x for x in never_split) 
         self.chars = self.load_chars()
@@ -245,12 +244,15 @@ class UnicodeTokenizer:
             elif not x:
                 continue
             else:
+                if self.do_lower_case:
+                    x=x.lower()
+                if x in self.never_split:
+                    tokens.append(x)
+                    continue
                 ts = self.char_split(x)
-
                 if self.do_lower_case:
                     tsl = []
                     for t in ts:
-                        t = t.lower()
                         s = normalize(t, do_lower_case=False)
                         if s in self.never_split or s == t:
                             tsl.append(t)
@@ -258,14 +260,6 @@ class UnicodeTokenizer:
                             us = self.char_split(s, split_mark=False)
                             tsl += us
                     ts = tsl
-
-                if self.max_len > 0:
-                    ts1 = []
-                    for s in ts:
-                        ts1 += [s[i:i+self.max_len]
-                                for i in range(0, len(s), self.max_len)]
-                    ts = ts1
-
                 tokens += ts
         tokens = [x for x in tokens if x]
         return tokens
