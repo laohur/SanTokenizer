@@ -2,7 +2,7 @@ import glob
 import math
 import shutil
 import multiprocessing
-from collections import Counter
+import collections
 import os
 import random
 
@@ -35,7 +35,7 @@ def token(line):
 
 
 def count_files(files):
-    counter = Counter()
+    counter = collections.Counter()
     logger.info(f" reading:{files} ")
     for i, src in enumerate(files):
         logger.info(
@@ -50,7 +50,7 @@ def count_files(files):
                 continue
             tokens = token(l)
             for x in tokens:
-                if not x or len(x) > 20:
+                if not x:
                     continue
                 counter[x] += 1
     logger.info(
@@ -73,9 +73,9 @@ def scan_lang(lang):
     os.makedirs(dir, exist_ok=True)
     tgt = f"{dir}/word_frequency.tsv"
     if os.path.exists(tgt):
-        # os.remove(tgt)
-        logger.warning(f"{tgt} 存在")
-        return
+        logger.warning(f"{tgt} exists, remove")
+        # return
+        os.remove(tgt)
     counter = count_files(files)
     if not counter:
         logger.warning(f" word_counter:{len(counter)} --> None  ")
@@ -95,10 +95,10 @@ def scan_lang(lang):
 
 
 def coung_global():
-    counter = Counter()
+    counter = collections.Counter()
     langs = get_langs()
-
-    # freq_path=f"C:/data/languages/*/word_frequency.tsv"
+    dir = f"C:/data/languages/global"
+    os.makedirs(dir, exist_ok=True)
     freq_paths = [
         f"C:/data/languages/{lang}/word_frequency.tsv" for lang in langs]
     for src in freq_paths:
@@ -109,15 +109,13 @@ def coung_global():
             w = l.split('\t')
             k, v = w
             v = int(v)
-            if v <= 1 or len(k) > 20:
-                continue
-            counter[k] += math.sqrt(v)/2
+            counter[k] += math.pow(v, 0.75)
         logger.info(f"src：{src} counter:{len(counter)}")
-    words = [(k, int(v)) for k, v in counter.items() if v>=len(k)]
+    words = [(k, int(v)) for k, v in counter.items() if v > 1.1]
     del counter
     words.sort(key=lambda x: (-x[1], len(x[0]), x[0]))
     total = 0
-    tgt = f"C:/data/languages/global/word_frequency.tsv"
+    tgt = f"{dir}/word_frequency.tsv"
     with open(tgt, "w") as f:
         for k, v in words:
             f.write(f"{k}\t{v}"+'\n')
@@ -128,12 +126,11 @@ def coung_global():
 if __name__ == "__main__":
     import multiprocessing
 
-    # coung_global()
     langs = get_langs()
-    # random.shuffle(langs)
-    # for lang in langs:
-    #     scan_lang(lang)
-    with multiprocessing.Pool(6) as pool:
-        re=pool.imap_unordered(scan_lang,langs)
-        for i,x in enumerate(re):
-            logger.info((i,x))
+    langs = ['en']+[x for x in langs if x != 'en']
+    with multiprocessing.Pool(8) as pool:
+        re = pool.imap_unordered(scan_lang, langs)
+        for i, x in enumerate(re):
+            logger.info((i, x))
+
+    coung_global()

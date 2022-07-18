@@ -8,9 +8,6 @@ from timeit import repeat
 from UnicodeTokenizer.UnicodeTokenizer import UnicodeTokenizer
 from BertTokenization import BasicTokenizer as BertBasicTokenizer
 
-from setuptools import setup, find_packages
-print(find_packages())
-
 
 def demo(doc):
     head = ["sentence", "UnicodeTokenizer",

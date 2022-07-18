@@ -130,7 +130,6 @@ def char_name(x):
     except:
         name = ""
         # raiseExceptions(f"{x} no name")
-
     return name
 
 
@@ -188,10 +187,10 @@ def blank_split(line):
 class UnicodeTokenizer:
     def __init__(self,  do_lower_case=True, never_split=set()):
         self.do_lower_case = do_lower_case
-        self.never_split = set(x for x in never_split) 
+        self.never_split = set(x for x in never_split)
         self.chars = self.load_chars()
 
-    def load_chars(self,        max_unicode=0x110000):
+    def load_chars(self, max_unicode=0x110000):
         chars = [chr(x) for x in range(max_unicode)]
         for i, x in enumerate(chars):
             cat = unicodedata.category(x)[0]
@@ -203,26 +202,23 @@ class UnicodeTokenizer:
     def char_split(self, line, split_mark=True):
         if not line:
             return []
-        chars = []
+        l = ''
         start_new_word = False
         cat0, name0, isolate0 = self.chars[ord(line[0])]
         for i, x in enumerate(line):
             if start_new_word and split_mark:
-                chars.append(' ')
+                l += ' '
                 start_new_word = False
             cat, name, isolate = self.chars[ord(x)]
             if cat in 'CZ':
-                chars.append(' ')
+                l += ' '
             elif cat in 'PS' or isolate:
-                chars.append(' ')
-                chars.append(x)
-                chars.append(' ')
+                l += f' {x} '
             elif cat in 'LN':
                 if i >= 1:
-                    # cat0,name0,isolate0=self.chars[ord(line[i-1])]
                     if cat != cat0 or name != name0:
-                        chars.append(' ')
-                chars.append(x)
+                        l += ' '
+                l += x
             elif cat in 'M':
                 start_new_word = True
                 continue  # not update
@@ -230,8 +226,6 @@ class UnicodeTokenizer:
                 raiseExceptions(f"{x} cat{cat} not in LMNPSZC")
             cat0 = cat
             name0 = name
-
-        l = ''.join(chars)
         tokens = blank_split(l)
         return tokens
 
@@ -241,11 +235,9 @@ class UnicodeTokenizer:
         for x in words:
             if x in self.never_split:
                 tokens.append(x)
-            elif not x:
-                continue
             else:
                 if self.do_lower_case:
-                    x=x.lower()
+                    x = x.lower()
                 if x in self.never_split:
                     tokens.append(x)
                     continue
