@@ -5,7 +5,8 @@ from logging import raiseExceptions
 import unicodedata
 
 # from Blocks import Blocks
-from UnicodeTokenizer.Blocks import Blocks
+# from UnicodeTokenizer.Blocks import Blocks
+from .Blocks import Blocks
 BlockStarts = [x[0] for x in Blocks]
 
 
@@ -133,11 +134,25 @@ def char_name(x):
     return name
 
 
+def full2half(s):
+    # ref:https://segmentfault.com/a/1190000006197218
+    t=''
+    for char in s:
+        num = ord(char)
+        if num == 0x3000:
+            num = 32
+        elif 0xFF01 <= num <= 0xFF5E:
+            num -= 0xFEE0
+        c = chr(num)
+        t+=c
+    return t
+
 def normalize(line, do_lower_case=True, normal_type="NFD"):
     l = line.strip()
     if do_lower_case:
         l = l.lower()
     l = unicodedata.normalize(normal_type, l)
+    l=full2half(l)
     return l
 
 
@@ -258,6 +273,7 @@ class UnicodeTokenizer:
 
 
 if __name__ == "__main__":
+    print(full2half("２０１９"))
     for x in " 〇(白":
         print(detect_hanzi(x))
     line = ''
@@ -267,8 +283,7 @@ if __name__ == "__main__":
             line += c
         except:
             pass
-    line = '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-b\tlanc-élevé » (白高大夏國)'+chr(
-        0x110000-1)
+    line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
     # line = "=True"
     print("split_chars", split_chars(line))
     print("split_category", split_category(line))

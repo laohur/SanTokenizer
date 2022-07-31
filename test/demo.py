@@ -12,19 +12,19 @@ from BertTokenization import BasicTokenizer as BertBasicTokenizer
 def demo(doc):
     head = ["sentence", "UnicodeTokenizer",
             "Unicode Tokens Length", "BertBasicTokenizer", "Bert Tokens length"]
-    result = ['\t'.join(head)]
+    result = [head]
     for line in doc:
         tokens1 = UnicodeTokenizer.tokenize(line)
         tokens2 = BertTokenizer.tokenize(line)
         row = [line, ' '.join(tokens1), len(tokens1),
                ' '.join(tokens2), len(tokens2)]
-        row = '\t'.join(str(x) for x in row)
         result.append(row)
     # result='\n'.join(result)
     print(result)
     with open("data/result.tsv", "w") as f:
         for row in result:
-            f.write(row+'\n')
+            line = '\t'.join(str(x) for x in row)
+            f.write(line+'\n')
 
 
 if __name__ == "__main__":
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"]))
     BertTokenizer = BertBasicTokenizer(do_lower_case=True)
 
-    doc = [" '〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)'",
+    doc = ["'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff",
            "Ⅷ首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name",
            "的输出คุณจะจัดพิธีแต่งงานเมื่อไรคะ탑승 수속해야pneumonoultramicroscopicsilicovolcanoconiosis",
            "하는데 카운터가 어디에 있어요ꆃꎭꆈꌠꊨꏦꏲꅉꆅꉚꅉꋍꂷꂶꌠلأحياء تمارين تتطلب من [MASK] [PAD] [CLS][SEP]",
