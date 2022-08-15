@@ -4,9 +4,7 @@ import bisect
 from logging import raiseExceptions
 import unicodedata
 
-# from Blocks import Blocks
-# from UnicodeTokenizer.Blocks import Blocks
-from .Blocks import Blocks
+from Blocks import Blocks
 BlockStarts = [x[0] for x in Blocks]
 
 
@@ -136,7 +134,7 @@ def char_name(x):
 
 def full2half(s):
     # ref:https://segmentfault.com/a/1190000006197218
-    t=''
+    t = ''
     for char in s:
         num = ord(char)
         if num == 0x3000:
@@ -144,15 +142,16 @@ def full2half(s):
         elif 0xFF01 <= num <= 0xFF5E:
             num -= 0xFEE0
         c = chr(num)
-        t+=c
+        t += c
     return t
+
 
 def normalize(line, do_lower_case=True, normal_type="NFD"):
     l = line.strip()
     if do_lower_case:
         l = l.lower()
     l = unicodedata.normalize(normal_type, l)
-    l=full2half(l)
+    l = full2half(l)
     return l
 
 
@@ -262,7 +261,7 @@ class UnicodeTokenizer:
                     for t in ts:
                         s = normalize(t, do_lower_case=False)
                         if s in self.never_split or s == t:
-                            tsl.append(t)
+                            tsl.append(s)
                         else:
                             us = self.char_split(s, split_mark=False)
                             tsl += us

@@ -11,8 +11,9 @@ with open(os.path.join(here, 'readme.md')) as f:
 
 setup(
     name="UnicodeTokenizer",
-    packages=find_packages(),
-    version='0.0.7',
+    # packages=find_packages(),
+    py_modules=['Blocks', 'UnicodeTokenizer'],
+    version='0.0.8',
     description='UnicodeTokenizer: tokenize all Unicode text',
     long_description=long_description,
     long_description_content_type="text/markdown",
