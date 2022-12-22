@@ -5,7 +5,7 @@ from collections import Counter
 import os
 import unicodedata
 from timeit import repeat
-from UnicodeTokenizer.UnicodeTokenizer import UnicodeTokenizer
+from UnicodeTokenizer  import UnicodeTokenizer
 from BertTokenization import BasicTokenizer as BertBasicTokenizer
 
 
@@ -13,7 +13,7 @@ def demo(doc):
     head = ["sentence", "UnicodeTokenizer",
             "Unicode Tokens Length", "BertBasicTokenizer", "Bert Tokens length"]
     result = [head]
-    for line in doc:
+    for line in doc[1:]:
         tokens1 = UnicodeTokenizer.tokenize(line)
         tokens2 = BertTokenizer.tokenize(line)
         row = [line, ' '.join(tokens1), len(tokens1),
@@ -29,8 +29,8 @@ def demo(doc):
 
 if __name__ == "__main__":
 
-    UnicodeTokenizer = UnicodeTokenizer(do_lower_case=True, never_split=set([
-        "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"]))
+    UnicodeTokenizer = UnicodeTokenizer(do_lower_case=True, never_split=[
+        "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"])
     BertTokenizer = BertBasicTokenizer(do_lower_case=True)
 
     doc = ["'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff",

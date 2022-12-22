@@ -1,17 +1,17 @@
 # UnicodeTokenizer
 
-UnicodeTokenizer: tokenize all Unicode text
+UnicodeTokenizer: tokenize all Unicode text, tokenize blank char as a token as default
 
 ## 切词规则 Tokenize Rules
 * 空白切分 split on blank： '\n', ' ', '\t'
 * 保留关键词 keep never_splits
-* 字符分割 chars split： 以字的符号类别和语言分割 split line by category and languae of characters
-    - 类别CZ替换为空格:  category C/Z  -> ' '
-    - 类别为PS或大字符集，单字分割：category P/S or big alphabet  -> ' ' + x + ' '
-    - 类别为LN且不同语言，新分割: Letter or Number of different languages ->  ' '+ x
-    - 类别为M，替换为空格： category M -> ' '
 * 若小写，则规范化：全角转半角，则NFD规范化，再字符分割  nomalize if lower：full2half，nomalize NFD, then chars split 
     - 类别为M，略过 ingore if category M ： category M -> ''
+* 字符分割 chars split： 以字的符号类别和语言分割 split line by category and languae of characters
+    - 只有临近数字成词 only numers joind
+    - 只有临近字母成词 only letters joind 
+    - 高码点独字  split high UnicodePoint characters
+
 * 截断 max_len
 
 

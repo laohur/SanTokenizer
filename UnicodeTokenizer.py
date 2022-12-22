@@ -1,126 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import bisect
-from logging import raiseExceptions
 import unicodedata
 
-from Blocks import Blocks
-BlockStarts = [x[0] for x in Blocks]
 
-
-def get_block(c):
-    point = ord(c)
-    idx = bisect.bisect_right(BlockStarts, point)-1
-    if 0 <= idx <= len(Blocks) and Blocks[idx][0] <= point <= Blocks[idx][1]:
-        return Blocks[idx]
-    else:
-        return -1, 0xffffffff, 'invalid', 0
-
-
-def detect_hanzi(c):
-    """
-    if character c is hanzi
-    """
-    m, n, name, is_hanzi = get_block(c)
-    return is_hanzi
-
-
-def is_iso_char(c):
-    m, n, name, is_hanzi = get_block(c)
-    if is_hanzi:
-        return True
-    if n-m+1 > 256:
-        return True
-    return False
-
-
-def split_chars(line):
-    if len(line) <= 1:
-        return [line]
-    tokens = []
-    for x in line:
-        if is_iso_char(x):
-            tokens.append(' ')
-            tokens.append(x)
-            tokens.append(' ')
-        else:
-            tokens.append(x)
-    w = ''.join(tokens).split()
-    return [x for x in w if x]
-
-
-def trunc_len(words, max_len=50, never_split=None):
-    tokens = []
-    for x in words:
-        if not x:
-            continue
-        if len(x) <= max_len or (never_split and x in never_split):
-            tokens.append(x)
-        else:
-            tokens += [x[i:i+max_len] for i in range(0, len(x), max_len)]
-    return tokens
-
-# https://www.zmonster.me/2018/10/20/nlp-road-3-unicode.html
-
-
-def split_category(line):
-    # if len(line) <= 1:
-    # return line
-    l = ''
-    cat0 = cat = ''
-    for x in line:
-        cat = unicodedata.category(x)[0]
-        if cat in 'CZ':
-            x = ' '
-        elif cat in 'P':
-            x = ' '+x+' '
-        elif cat in 'LN' and cat0 != cat:
-            x = ' '+x
-        cat0 = cat
-        l += x
-    return l
-
-
-def strip_accents(line):
-    line = unicodedata.normalize('NFD', line)
-    l = ''
-    for x in line:
-        if x == '-':
-            d = 0
-        cat = unicodedata.category(x)
-        if cat == "Mn":
-            continue
-        l += x
-    return l
-
-
-def split_lanugage(line):
-    if len(line) <= 1:
-        return line
-    l = ''
-    name0 = name = ''
-    for x in line:
-        try:
-            name = unicodedata.name(x).split(' ')[0]
-            if name != name0:
-                x = ' '+x
-        except:
-            x = ' '
-        name0 = name
-        l += x
-    return l
-
-
-def split_punctuation(line):
-    if len(line) <= 1:
-        return line
-    l = ''
-    for x in line:
-        cat = unicodedata.category(x)[0]
-        if cat == "P":
-            x = ' '+x+' '
-        l += x
-    return l
 
 
 def char_name(x):
@@ -132,176 +14,113 @@ def char_name(x):
     return name
 
 
-def full2half(s):
-    # ref:https://segmentfault.com/a/1190000006197218
-    t = ''
-    for char in s:
-        num = ord(char)
-        if num == 0x3000:
-            num = 32
-        elif 0xFF01 <= num <= 0xFF5E:
-            num -= 0xFEE0
-        c = chr(num)
-        t += c
-    return t
-
-
-def normalize(line, do_lower_case=True, normal_type="NFD"):
-    l = line.strip()
-    if do_lower_case:
-        l = l.lower()
-    l = unicodedata.normalize(normal_type, l)
-    l = full2half(l)
-    return l
-
-
-def char_split(line, split_mark=True):
-    chars = []
-    name0 = name = ' '
-    cat0 = cat = ' '
-    chars0 = [x for x in line.strip() if x]
-    chars = []
-    start_new_word = False
-    for x in chars0:
-        if start_new_word and split_mark:
-            chars.append(' ')
-            start_new_word = False
-        cat = unicodedata.category(x)
-        name = char_name(x)
-        if cat[0] in 'CZ':
-            chars.append(' ')
-        elif cat[0] in 'PS' or is_iso_char(x):
-            chars.append(' ')
-            chars.append(x)
-            chars.append(' ')
-        elif cat[0] in 'LN':
-            if cat[0] != cat0[0] or name != name0:
-                chars.append(' ')
-            chars.append(x)
-        elif cat[0] in 'M':
-            start_new_word = True
-            continue
-        else:
-            raiseExceptions(f"{x} cat{cat} not in LMNPSZC")
-
-        cat0 = cat
-        name0 = name
-
-    l = ''.join(chars)
-    tokens = [x for x in l.split() if x]
-    return tokens
-
-
-def blank_split(line):
-    l = ''.join([x if x else ' ' for x in line])
-    tokens = [x for x in l.split() if x]
-    return tokens
-
-
 class UnicodeTokenizer:
-    def __init__(self,  do_lower_case=True, never_split=set()):
+    def __init__(self,  do_lower_case=True, never_split=[], high_UnicodePoint=10000):
         self.do_lower_case = do_lower_case
+        self.high_UnicodePoint = high_UnicodePoint
         self.never_split = set(x for x in never_split)
-        self.chars = self.load_chars()
 
-    def load_chars(self, max_unicode=0x110000):
-        chars = [chr(x) for x in range(max_unicode)]
-        for i, x in enumerate(chars):
-            cat = unicodedata.category(x)[0]
-            name = char_name(x)
-            isolate = is_iso_char(x)
-            chars[i] = (cat, name, isolate)
-        return chars
-
-    def char_split(self, line, split_mark=True):
-        if not line:
+    def is_blank(self,x):
+        return not bool(x.strip())
+    
+    def split_blank(self,line):
+        if len(line)==1:
+            return [line]
+        elif len(line)==0:
             return []
-        l = ''
-        start_new_word = False
-        cat0, name0, isolate0 = self.chars[ord(line[0])]
+        marks = [self.is_blank(x) for x in line]
+        return self.split_marks(line,marks)
+
+    def split_marks(self,line,marks):
+        tokens = []
         for i, x in enumerate(line):
-            if start_new_word and split_mark:
-                l += ' '
-                start_new_word = False
-            cat, name, isolate = self.chars[ord(x)]
-            if cat in 'CZ':
-                l += ' '
-            elif cat in 'PS' or isolate:
-                l += f' {x} '
-            elif cat in 'LN':
-                if i >= 1:
-                    if cat != cat0 or name != name0:
-                        l += ' '
-                l += x
-            elif cat in 'M':
-                start_new_word = True
-                continue  # not update
+            if i == 0:
+                tokens.append(x)
+                continue
+            if marks[i] or marks[i-1]:
+                tokens.append(x)
+                continue
             else:
-                raiseExceptions(f"{x} cat{cat} not in LMNPSZC")
-            cat0 = cat
-            name0 = name
-        tokens = blank_split(l)
+                tokens[-1] += x
         return tokens
 
-    def tokenize(self, line):
-        words = blank_split(line)
+    def normalize(self, line,  normal_type="NFD"):
+        l = unicodedata.normalize(normal_type, line)
+        return l
+    
+    def split_high_UnicodePoint(self,line):
+        if len(line) == 1:
+            return [line]
+        elif len(line) == 0:
+            return []
+        marks = [ord(x) > self.high_UnicodePoint for x in line]
+        return self.split_marks(line, marks)
+
+    def split_category(self,line):
+        if len(line) == 1:
+            return [line]
+        elif len(line) == 0:
+            return []
+        categorys=[ unicodedata.category(x)[0] for x in line ]
+        tokens = []
+        for i, x in enumerate(line):
+            if i == 0:
+                tokens.append(x)
+                continue
+            if categorys[i] == categorys[i-1] == 'L':
+                if char_name(x)==char_name(line[i-1]):
+                    tokens[-1] += x
+                else:
+                    tokens.append(x)
+                continue
+            elif categorys[i] == categorys[i-1] == 'N':
+                if char_name(x) == char_name(line[i-1]):
+                    tokens[-1] += x
+                else:
+                    tokens.append(x)
+                continue
+            else:
+                tokens.append(x)
+        return tokens
+
+    def split_line(self, line):
+        words = self.split_blank(line)
         tokens = []
         for x in words:
             if x in self.never_split:
                 tokens.append(x)
             else:
                 if self.do_lower_case:
-                    x = x.lower()
-                if x in self.never_split:
-                    tokens.append(x)
-                    continue
-                ts = self.char_split(x)
-                if self.do_lower_case:
-                    tsl = []
-                    for t in ts:
-                        s = normalize(t, do_lower_case=False)
-                        if s in self.never_split or s == t:
-                            tsl.append(s)
-                        else:
-                            us = self.char_split(s, split_mark=False)
-                            tsl += us
-                    ts = tsl
-                tokens += ts
-        tokens = [x for x in tokens if x]
+                    x = self.normalize(x.lower())
+                us = self.split_blank(x)
+                for u in us:
+                    vs = self.split_high_UnicodePoint(u)
+                    for v in vs:
+                        w = self.split_category(v)
+                        tokens += w
+        return tokens
+
+    def tokenize(self, line, remove_blank=True):
+        tokens=self.split_line(line)
+        if remove_blank:
+            tokens=[x.strip() for x in tokens if x.strip()]
         return tokens
 
 
 if __name__ == "__main__":
-    print(full2half("２０１９"))
-    for x in " 〇(白":
-        print(detect_hanzi(x))
-    line = ''
-    for i in range(128):
-        try:
-            c = chr(i)
-            line += c
-        except:
-            pass
-    line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
-    # line = "=True"
-    print("split_chars", split_chars(line))
-    print("split_category", split_category(line))
-    print("strip_accents", strip_accents(line))
-    print("split_lanugage", split_lanugage(line))
-    print("split_punctuation", split_punctuation(line))
+    from logzero import logger
 
-    print("blank_split", blank_split(line))
-    l2 = normalize(line)
-    print(l2)
-    print(char_split(line))
-    print(char_split(l2))
+
+    line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
+    tokenizer=UnicodeTokenizer()
+    logger.info((tokenizer.split_blank(line)))
+    # line = "=True"
 
     tokenizer = UnicodeTokenizer()
-    print(tokenizer.tokenize(line))
-    print(tokenizer.tokenize(line))
+    logger.info(tokenizer.tokenize(line))
     import timeit
     # re=timeit.timeit("''.join(chr(x) for x in range(int(1e6))) ")
-    # print(re)
+    # logger.info(re)
 
     import time
     t0 = time.time()
@@ -309,4 +128,4 @@ if __name__ == "__main__":
         # chr(i)  # ValueError: chr() arg not in range(0x110000)
         tokenizer.tokenize(line)
     t1 = time.time()
-    print(t1-t0)
+    logger.info(t1-t0)
