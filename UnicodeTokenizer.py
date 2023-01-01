@@ -3,8 +3,6 @@
 import unicodedata
 
 
-
-
 def char_name(x):
     try:
         name = unicodedata.name(x).split(' ')[0]
@@ -63,24 +61,31 @@ class UnicodeTokenizer:
             return []
         categorys=[ unicodedata.category(x)[0] for x in line ]
         tokens = []
+        last_name=''
         for i, x in enumerate(line):
             if i == 0:
                 tokens.append(x)
                 continue
             if categorys[i] == categorys[i-1] == 'L':
-                if char_name(x)==char_name(line[i-1]):
+                name = unicodedata.name(x).split(' ')[0]
+                if name==last_name:
                     tokens[-1] += x
                 else:
                     tokens.append(x)
+                last_name=name
                 continue
             elif categorys[i] == categorys[i-1] == 'N':
-                if char_name(x) == char_name(line[i-1]):
+                name = unicodedata.name(x).split(' ')[0]
+                if name == last_name:
                     tokens[-1] += x
                 else:
                     tokens.append(x)
+                last_name = name
                 continue
             else:
                 tokens.append(x)
+                if categorys[i]  in ['L','N']:
+                    last_name = unicodedata.name(x).split(' ')[0]
         return tokens
 
     def split_line(self, line):
