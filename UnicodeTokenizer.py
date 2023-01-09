@@ -13,10 +13,11 @@ def char_name(x):
 
 
 class UnicodeTokenizer:
-    def __init__(self,  do_lower_case=True, never_split=[], high_UnicodePoint=10000):
+    def __init__(self,  do_lower_case=True, never_split=[], high_UnicodePoint=10000, remove_blank=True):
         self.do_lower_case = do_lower_case
         self.high_UnicodePoint = high_UnicodePoint
         self.never_split = set(x for x in never_split)
+        self.remove_blank=remove_blank
 
     def is_blank(self,x):
         return not bool(x.strip())
@@ -105,10 +106,10 @@ class UnicodeTokenizer:
                         tokens += w
         return tokens
 
-    def tokenize(self, line, remove_blank=True):
+    def tokenize(self, line):
         tokens=self.split_line(line)
-        if remove_blank:
-            tokens=[x.strip() for x in tokens if x.strip()]
+        if self.remove_blank:
+            tokens=[x for x in tokens if x]
         return tokens
 
 
