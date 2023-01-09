@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import glob
-from collections import Counter
-import os
-import unicodedata
+
 from timeit import repeat
 from UnicodeTokenizer  import UnicodeTokenizer
 from BertTokenization import BasicTokenizer as BertBasicTokenizer
@@ -29,9 +26,8 @@ def demo(doc):
 
 if __name__ == "__main__":
 
-    UnicodeTokenizer = UnicodeTokenizer(do_lower_case=True, never_split=[
-        "[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"])
-    BertTokenizer = BertBasicTokenizer(do_lower_case=True)
+    UnicodeTokenizer = UnicodeTokenizer(never_split=["[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"])
+    BertTokenizer = BertBasicTokenizer()
 
     doc = ["'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff",
            "Ⅷ首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name",

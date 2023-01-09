@@ -109,7 +109,7 @@ class UnicodeTokenizer:
     def tokenize(self, line):
         tokens=self.split_line(line)
         if self.remove_blank:
-            tokens=[x for x in tokens if x]
+            tokens=[x.strip() for x in tokens if x.strip()]
         return tokens
 
 
