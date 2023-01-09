@@ -52,7 +52,7 @@ class UnicodeTokenizer:
         elif len(line) == 0:
             return []
         categorys = [unicodedata.category(x)[0] for x in line]
-        names = [unicodedata.name(x).split(' ')[0] for x in line]
+        names = [unicodedata.name(x).split(' ')[0] if categorys[i] in 'LN' else None for i, x in enumerate(line)]
         tokens = []
         for i, x in enumerate(line):
             if i == 0:
