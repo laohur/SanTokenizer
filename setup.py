@@ -13,7 +13,7 @@ setup(
     name="UnicodeTokenizer",
     # packages=find_packages(),
     py_modules=['Blocks', 'UnicodeTokenizer'],
-    version='0.1.3',
+    version='0.1.4',
     description='UnicodeTokenizer: tokenize all Unicode text',
     long_description=long_description,
     long_description_content_type="text/markdown",

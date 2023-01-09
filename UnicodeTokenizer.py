@@ -3,15 +3,6 @@
 import unicodedata
 
 
-def char_name(x):
-    try:
-        name = unicodedata.name(x).split(' ')[0]
-    except:
-        name = ""
-        # raiseExceptions(f"{x} no name")
-    return name
-
-
 class UnicodeTokenizer:
     def __init__(self,  do_lower_case=True, never_split=[], high_UnicodePoint=10000, remove_blank=True):
         self.do_lower_case = do_lower_case
@@ -60,33 +51,27 @@ class UnicodeTokenizer:
             return [line]
         elif len(line) == 0:
             return []
-        categorys=[ unicodedata.category(x)[0] for x in line ]
+        categorys = [unicodedata.category(x)[0] for x in line]
+        names = [unicodedata.name(x).split(' ')[0] for x in line]
         tokens = []
-        last_name=''
         for i, x in enumerate(line):
             if i == 0:
                 tokens.append(x)
                 continue
             if categorys[i] == categorys[i-1] == 'L':
-                name = unicodedata.name(x).split(' ')[0]
-                if name==last_name:
+                if names[i]==names[i-1]:
                     tokens[-1] += x
                 else:
                     tokens.append(x)
-                last_name=name
                 continue
             elif categorys[i] == categorys[i-1] == 'N':
-                name = unicodedata.name(x).split(' ')[0]
-                if name == last_name:
+                if names[i] == names[i-1]:
                     tokens[-1] += x
                 else:
                     tokens.append(x)
-                last_name = name
                 continue
             else:
                 tokens.append(x)
-                if categorys[i]  in ['L','N']:
-                    last_name = unicodedata.name(x).split(' ')[0]
         return tokens
 
     def split_line(self, line):
@@ -109,7 +94,7 @@ class UnicodeTokenizer:
     def tokenize(self, line):
         tokens=self.split_line(line)
         if self.remove_blank:
-            tokens=[x.strip() for x in tokens if x.strip()]
+            tokens = [x.strip() for x in tokens if x.strip()]
         return tokens
 
 
@@ -118,6 +103,7 @@ if __name__ == "__main__":
 
 
     line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
+    line = "art_new_word=True"
     tokenizer=UnicodeTokenizer()
     logger.info((tokenizer.split_blank(line)))
     # line = "=True"
