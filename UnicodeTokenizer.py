@@ -14,9 +14,7 @@ class UnicodeTokenizer:
         return not bool(x.strip())
     
     def split_blank(self,line):
-        if len(line)==1:
-            return [line]
-        elif len(line)==0:
+        if not line:
             return []
         marks = [self.is_blank(x) for x in line]
         return self.split_marks(line,marks)
@@ -26,10 +24,8 @@ class UnicodeTokenizer:
         for i, x in enumerate(line):
             if i == 0:
                 tokens.append(x)
-                continue
-            if marks[i] or marks[i-1]:
+            elif marks[i] or marks[i-1]:
                 tokens.append(x)
-                continue
             else:
                 tokens[-1] += x
         return tokens
@@ -39,11 +35,9 @@ class UnicodeTokenizer:
         return l
     
     def split_high_UnicodePoint(self,line):
-        if len(line) == 1:
-            return [line]
-        elif len(line) == 0:
+        if not line:
             return []
-        marks = [ord(x) > self.high_UnicodePoint for x in line]
+        marks = [ord(x) >= self.high_UnicodePoint for x in line]
         return self.split_marks(line, marks)
 
     def split_category(self,line):
@@ -103,7 +97,7 @@ if __name__ == "__main__":
 
 
     line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
-    line = "art_new_word=True"
+    # line = "art_new_word=True"
     tokenizer=UnicodeTokenizer()
     logger.info((tokenizer.split_blank(line)))
     # line = "=True"
