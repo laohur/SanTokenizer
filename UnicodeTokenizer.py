@@ -19,11 +19,11 @@ class UnicodeTokenizer:
         marks = [self.is_blank(x) for x in line]
         return self.split_marks(line,marks)
 
-    def split_marks1(self,line,marks):
-        # slow
-        starts=[i for i in range(len(marks) ) if i==0 or marks[i]!=marks[i-1] or marks[i] == None]
-        tokens=[  line[x:starts[i+1]]  if i+1<len(starts) else line[i:]  for i,x in enumerate(starts) ]
-        return tokens
+    # def split_marks1(self,line,marks):
+    #     # slow
+    #     starts=[i for i in range(len(marks) ) if i==0 or marks[i]!=marks[i-1] or marks[i] == None]
+    #     tokens=[  line[x:starts[i+1]]  if i+1<len(starts) else line[i:]  for i,x in enumerate(starts) ]
+    #     return tokens
 
     def split_marks(self,line,marks):
         tokens = []
@@ -98,9 +98,12 @@ class UnicodeTokenizer:
         return tokens
 
     def tokenize(self, line):
-        tokens=self.split_line(line)
         if self.remove_blank:
-            tokens = [x.strip() for x in tokens if x.strip()]
+            tokens=[]
+            for word in line.split():
+                tokens+=[x.strip() for x in  self.split_line(word) if x.strip()]  
+        else:
+            tokens=self.split_line(line)
         return tokens
 
 
