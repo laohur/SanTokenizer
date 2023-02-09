@@ -19,6 +19,12 @@ class UnicodeTokenizer:
         marks = [self.is_blank(x) for x in line]
         return self.split_marks(line,marks)
 
+    def split_marks1(self,line,marks):
+        # slow
+        starts=[i for i in range(len(marks) ) if i==0 or marks[i]!=marks[i-1] or marks[i] == None]
+        tokens=[  line[x:starts[i+1]]  if i+1<len(starts) else line[i:]  for i,x in enumerate(starts) ]
+        return tokens
+
     def split_marks(self,line,marks):
         tokens = []
         for i, x in enumerate(line):
@@ -29,13 +35,15 @@ class UnicodeTokenizer:
             else:
                 tokens[-1] += x
         return tokens
-
+        
     def normalize(self, line,  normal_type="NFD"):
         l = unicodedata.normalize(normal_type, line)
         return l
     
     def split_high_UnicodePoint(self,line):
-        if not line:
+        if len(line) == 1:
+            return [line]
+        elif len(line) == 0:
             return []
         marks = [ord(x) >= self.high_UnicodePoint for x in line]
         return self.split_marks(line, marks)
@@ -47,6 +55,10 @@ class UnicodeTokenizer:
             return []
         categorys = [unicodedata.category(x)[0] for x in line]
         names = [unicodedata.name(x).split(' ')[0] if categorys[i] in 'LN' else None for i, x in enumerate(line)]
+        # marks=names  # not fast
+        # starts=[i for i in range(len(marks) ) if i==0 or marks[i]!=marks[i-1] or marks[i] is None]
+        # tokens=[  line[x:starts[i+1]]  if i+1<len(starts) else line[i:]  for i,x in enumerate(starts) ]
+        # return tokens
         tokens = []
         for i, x in enumerate(line):
             if i == 0:
