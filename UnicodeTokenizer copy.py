@@ -55,10 +55,9 @@ class UnicodeTokenizer:
                 else:
                     tokens.append(x)
             else:
-                if categorys[i]!='Mn':
-                    tokens.append(x)
-                if categorys[i-1]=='Mn':
-                    tokens.append('')
+                tokens.append(x)
+                # if categorys[i-1]=='Mn':
+                #     tokens.append('')
 
         return [x.strip() for x in tokens if x.strip()]
 
