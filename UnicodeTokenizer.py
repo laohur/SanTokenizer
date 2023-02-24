@@ -85,9 +85,13 @@ class UnicodeTokenizer:
         return tokens
     
     def detokenize(self,tokens):
-        l=''
+        l=tokens[0]
         for i,x in enumerate(tokens):
-            if i>0 and ord(x[-1])<self.highUnicodePoint and  ord(tokens[i-1][-1] )<self.highUnicodePoint:
+            if i==0:
+                continue
+            a=tokens[i-1][-1]
+            b=x[0]
+            if max(ord(a), ord(b))<self.highUnicodePoint and unicodedata.category(a)[0]==unicodedata.category(b)[0] and unicodedata.category(a)[0] in 'LN':
                 l+=' '
             l+=x
         return l
@@ -104,7 +108,9 @@ if __name__ == "__main__":
     # line = "=True"
 
     tokenizer = UnicodeTokenizer()
-    logger.info(tokenizer.tokenize(line))
+    tokens=tokenizer.tokenize(line)
+    logger.info(tokens)
+    logger.info(tokenizer.detokenize(tokens))
     import timeit
     # re=timeit.timeit("''.join(chr(x) for x in range(int(1e6))) ")
     # logger.info(re)
@@ -116,3 +122,7 @@ if __name__ == "__main__":
         tokenizer.tokenize(line)
     t1 = time.time()
     logger.info(t1-t0)
+
+"""
+ '〇㎡[ค ณ จะจ ด พ ธ แ ต ง งานเม อ ไรคะ]ⅷpays-g[ran]d-blanc-e l eve»(白高大夏國)😀熇'00𧭏２０１９􏿿
+"""
