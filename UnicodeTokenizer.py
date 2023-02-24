@@ -4,9 +4,9 @@ import unicodedata
 import regex as re
 
 class UnicodeTokenizer:
-    def __init__(self,  do_lower_case=True, never_split=[], high_UnicodePoint=10000):
+    def __init__(self,  do_lower_case=True, never_split=[], highUnicodePoint=10000):
         self.do_lower_case = do_lower_case
-        self.high_UnicodePoint = high_UnicodePoint
+        self.highUnicodePoint = highUnicodePoint
         self.never_split = set(x for x in never_split)
 
     
@@ -29,8 +29,8 @@ class UnicodeTokenizer:
         l = unicodedata.normalize(normal_type, line)
         return l
     
-    def split_high_UnicodePoint(self,line):
-        marks = [ord(x) >= self.high_UnicodePoint for x in line]
+    def split_highUnicodePoint(self,line):
+        marks = [ord(x) >= self.highUnicodePoint for x in line]
         return self.split_marks(line, marks)
 
     def split_category(self,line):
@@ -68,7 +68,7 @@ class UnicodeTokenizer:
             x = self.normalize(x.lower())
         us = self.split_blank(x)
         for u in us:
-            vs = self.split_high_UnicodePoint(u)
+            vs = self.split_highUnicodePoint(u)
             for v in vs:
                 w = self.split_category(v)
                 tokens += w
@@ -83,6 +83,14 @@ class UnicodeTokenizer:
             else:
                 tokens += self.split_word(x)
         return tokens
+    
+    def detokenize(self,tokens):
+        l=''
+        for i,x in enumerate(tokens):
+            if i>0 and ord(x[-1])<self.highUnicodePoint and  ord(tokens[i-1][-1] )<self.highUnicodePoint:
+                l+=' '
+            l+=x
+        return l
 
 
 if __name__ == "__main__":
