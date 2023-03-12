@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import unicodedata
-import regex as re
 
 class UnicodeTokenizer:
     def __init__(self,  do_lower_case=True, never_split=[], highUnicodePoint=10000):
@@ -101,7 +100,7 @@ if __name__ == "__main__":
     from logzero import logger
 
 
-    line = "'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
+    line = "대한민국의'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff"
     # line = "art_new_word=True"
     tokenizer=UnicodeTokenizer()
     logger.info((tokenizer.split_blank(line)))
