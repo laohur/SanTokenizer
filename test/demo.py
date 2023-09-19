@@ -11,8 +11,8 @@ def demo(doc):
             "Unicode Tokens Length", "BertBasicTokenizer", "Bert Tokens length"]
     result = [head]
     for line in doc[1:]:
-        tokens1 = UnicodeTokenizer.tokenize(line)
-        tokens2 = BertTokenizer.tokenize(line)
+        tokens1 = uToker.tokenize(line)
+        tokens2 = bToker.tokenize(line)
         row = [line, ' '.join(tokens1), len(tokens1),
                ' '.join(tokens2), len(tokens2)]
         result.append(row)
@@ -26,8 +26,8 @@ def demo(doc):
 
 if __name__ == "__main__":
 
-    UnicodeTokenizer = UnicodeTokenizer(never_split=["[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"])
-    BertTokenizer = BertBasicTokenizer()
+    uToker = UnicodeTokenizer()
+    bToker = BertBasicTokenizer()
 
     doc = ["'〇㎡[คุณจะจัดพิธีแต่งงานเมื่อไรคะัีิ์ื็ํึ]Ⅷpays-g[ran]d-blanc-élevé » (白高大夏國)😀熇'\x0000𧭏２０１９\U0010ffff",
            "대한민국의Ⅷ首先8.88设置 st。art_new_word=True 和 output=[açaí]，output 就是最终 no such name",
